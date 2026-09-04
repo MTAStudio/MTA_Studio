@@ -7,69 +7,76 @@ const bcrypt = require("bcryptjs");
 const Database = require("better-sqlite3");
 
 // ======================================================
-// PORT
+// CONFIG
 // ======================================================
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+
+// آدرس GitHub Pages خودت را بعداً اینجا قرار بده.
+// اگر فعلاً تست می‌کنی، مقدار * قابل استفاده است.
+const FRONTEND_ORIGIN =
+    process.env.FRONTEND_ORIGIN || "*";
 
 // ======================================================
 // DATABASE
 // ======================================================
 
-const db = new Database("database.sqlite");
+const db = new Database(
+    path.join(__dirname, "database.sqlite")
+);
 
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 
 db.exec(`
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    phone TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    role TEXT NOT NULL DEFAULT 'customer',
-    phone_verified INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        phone TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'customer',
+        phone_verified INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    project_type TEXT NOT NULL,
-    budget TEXT NOT NULL,
-    description TEXT NOT NULL,
-    status TEXT NOT NULL DEFAULT 'pending',
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CREATE TABLE IF NOT EXISTS projects (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        phone TEXT NOT NULL,
+        project_type TEXT NOT NULL,
+        budget TEXT NOT NULL,
+        description TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'pending',
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
-);
+        FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE CASCADE
+    );
 
-CREATE TABLE IF NOT EXISTS otp_codes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    phone TEXT NOT NULL,
-    code_hash TEXT NOT NULL,
-    expires_at INTEGER NOT NULL,
-    attempts INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+    CREATE TABLE IF NOT EXISTS otp_codes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        phone TEXT NOT NULL,
+        code_hash TEXT NOT NULL,
+        expires_at INTEGER NOT NULL,
+        attempts INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
 
-CREATE TABLE IF NOT EXISTS notifications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title TEXT NOT NULL,
-    message TEXT NOT NULL,
-    is_read INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        title TEXT NOT NULL,
+        message TEXT NOT NULL,
+        is_read INTEGER NOT NULL DEFAULT 0,
+        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id)
-    REFERENCES users(id)
-    ON DELETE CASCADE
-);
+        FOREIGN KEY (user_id)
+            REFERENCES users(id)
+            ON DELETE CASCADE
+    );
 `);
 
 // ======================================================
@@ -89,15 +96,25 @@ function createSession(user) {
     return token;
 }
 
-function getCurrentUser(req) {
+function getSessionToken(req) {
     const cookie = req.headers.cookie || "";
-    const match = cookie.match(/mta_session=([^;]+)/);
+    const match = cookie.match(/(?:^|;\s*)mta_session=([^;]+)/);
 
-    if (!match) return null;
+    return match ? match[1] : null;
+}
 
-    const session = sessions.get(match[1]);
+function getCurrentUser(req) {
+    const token = getSessionToken(req);
 
-    if (!session) return null;
+    if (!token) {
+        return null;
+    }
+
+    const session = sessions.get(token);
+
+    if (!session) {
+        return null;
+    }
 
     return db.prepare(`
         SELECT
@@ -113,11 +130,49 @@ function getCurrentUser(req) {
 }
 
 function setSessionCookie(token) {
-    return `mta_session=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=604800`;
+    const isProduction = process.env.NODE_ENV === "production";
+
+    if (isProduction) {
+        return [
+            `mta_session=${token}`,
+            "HttpOnly",
+            "Path=/",
+            "SameSite=None",
+            "Secure",
+            "Max-Age=604800"
+        ].join("; ");
+    }
+
+    return [
+        `mta_session=${token}`,
+        "HttpOnly",
+        "Path=/",
+        "SameSite=Lax",
+        "Max-Age=604800"
+    ].join("; ");
 }
 
 function clearSessionCookie() {
-    return `mta_session=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0`;
+    const isProduction = process.env.NODE_ENV === "production";
+
+    if (isProduction) {
+        return [
+            "mta_session=",
+            "HttpOnly",
+            "Path=/",
+            "SameSite=None",
+            "Secure",
+            "Max-Age=0"
+        ].join("; ");
+    }
+
+    return [
+        "mta_session=",
+        "HttpOnly",
+        "Path=/",
+        "SameSite=Lax",
+        "Max-Age=0"
+    ].join("; ");
 }
 
 // ======================================================
@@ -181,10 +236,9 @@ function hashOTP(code) {
 
 function createOTP(phone) {
     const code = generateOTP();
-
     const codeHash = hashOTP(code);
 
-    // 2 دقیقه اعتبار
+    // ۲ دقیقه اعتبار
     const expiresAt = Date.now() + (2 * 60 * 1000);
 
     // حذف کدهای قبلی
@@ -195,7 +249,11 @@ function createOTP(phone) {
 
     db.prepare(`
         INSERT INTO otp_codes
-        (phone, code_hash, expires_at)
+        (
+            phone,
+            code_hash,
+            expires_at
+        )
         VALUES (?, ?, ?)
     `).run(
         phone,
@@ -211,12 +269,8 @@ function createOTP(phone) {
 // ======================================================
 
 async function sendSMS(phone, code) {
-    /*
-        فعلاً SMS واقعی ارسال نمی‌شود.
-
-        وقتی سرویس پیامکی را انتخاب کردیم،
-        این قسمت را با API سرویس موردنظر وصل می‌کنیم.
-    */
+    // فعلاً ارسال واقعی SMS نداریم.
+    // کد در لاگ Render نمایش داده می‌شود.
 
     console.log("");
     console.log("================================");
@@ -239,13 +293,24 @@ async function handleAPI(req, res) {
     // SIGN UP
     // ==================================================
 
-    if (req.method === "POST" && req.url === "/api/signup") {
+    if (
+        req.method === "POST" &&
+        req.url === "/api/signup"
+    ) {
         try {
             const body = await readBody(req);
 
-            const name = String(body.name || "").trim();
-            const phone = String(body.phone || "").trim();
-            const password = String(body.password || "");
+            const name = String(
+                body.name || ""
+            ).trim();
+
+            const phone = String(
+                body.phone || ""
+            ).trim();
+
+            const password = String(
+                body.password || ""
+            );
 
             if (!name) {
                 return sendJSON(res, 400, {
@@ -269,7 +334,9 @@ async function handleAPI(req, res) {
             }
 
             const existingUser = db.prepare(`
-                SELECT id, phone_verified
+                SELECT
+                    id,
+                    phone_verified
                 FROM users
                 WHERE phone = ?
             `).get(phone);
@@ -284,21 +351,28 @@ async function handleAPI(req, res) {
                     return sendJSON(res, 200, {
                         success: true,
                         needsVerification: true,
-                        message: "این حساب هنوز تأیید نشده است. کد جدید ارسال شد."
+                        message:
+                            "این حساب هنوز تأیید نشده است. کد جدید ارسال شد."
                     });
                 }
 
                 return sendJSON(res, 409, {
                     success: false,
-                    message: "این شماره قبلاً ثبت‌نام کرده است."
+                    message:
+                        "این شماره قبلاً ثبت‌نام کرده است."
                 });
             }
 
-            const passwordHash = await bcrypt.hash(password, 12);
+            const passwordHash =
+                await bcrypt.hash(password, 12);
 
             db.prepare(`
                 INSERT INTO users
-                (name, phone, password_hash)
+                (
+                    name,
+                    phone,
+                    password_hash
+                )
                 VALUES (?, ?, ?)
             `).run(
                 name,
@@ -313,7 +387,8 @@ async function handleAPI(req, res) {
             return sendJSON(res, 201, {
                 success: true,
                 needsVerification: true,
-                message: "حساب ساخته شد. کد تأیید ارسال شد."
+                message:
+                    "حساب ساخته شد. کد تأیید ارسال شد."
             });
 
         } catch (error) {
@@ -321,7 +396,8 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 500, {
                 success: false,
-                message: "خطایی در ثبت‌نام رخ داد."
+                message:
+                    "خطایی در ثبت‌نام رخ داد."
             });
         }
     }
@@ -337,20 +413,27 @@ async function handleAPI(req, res) {
         try {
             const body = await readBody(req);
 
-            const phone = String(body.phone || "").trim();
-            const code = String(body.code || "").trim();
+            const phone = String(
+                body.phone || ""
+            ).trim();
+
+            const code = String(
+                body.code || ""
+            ).trim();
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "شماره موبایل معتبر نیست."
+                    message:
+                        "شماره موبایل معتبر نیست."
                 });
             }
 
             if (!/^\d{6}$/.test(code)) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "کد تأیید باید ۶ رقمی باشد."
+                    message:
+                        "کد تأیید باید ۶ رقمی باشد."
                 });
             }
 
@@ -365,7 +448,8 @@ async function handleAPI(req, res) {
             if (!otp) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "کد تأیید پیدا نشد. دوباره درخواست کد کنید."
+                    message:
+                        "کد تأیید پیدا نشد. دوباره درخواست کد کنید."
                 });
             }
 
@@ -377,7 +461,8 @@ async function handleAPI(req, res) {
 
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "کد منقضی شده است."
+                    message:
+                        "کد منقضی شده است."
                 });
             }
 
@@ -389,7 +474,8 @@ async function handleAPI(req, res) {
 
                 return sendJSON(res, 429, {
                     success: false,
-                    message: "تعداد تلاش بیش از حد مجاز است. کد جدید بگیرید."
+                    message:
+                        "تعداد تلاش بیش از حد مجاز است. کد جدید بگیرید."
                 });
             }
 
@@ -404,7 +490,8 @@ async function handleAPI(req, res) {
 
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "کد تأیید اشتباه است."
+                    message:
+                        "کد تأیید اشتباه است."
                 });
             }
 
@@ -417,7 +504,8 @@ async function handleAPI(req, res) {
             if (!user) {
                 return sendJSON(res, 404, {
                     success: false,
-                    message: "کاربر پیدا نشد."
+                    message:
+                        "کاربر پیدا نشد."
                 });
             }
 
@@ -444,18 +532,21 @@ async function handleAPI(req, res) {
                 WHERE id = ?
             `).get(user.id);
 
-            const token = createSession(updatedUser);
+            const token =
+                createSession(updatedUser);
 
             return sendJSON(
                 res,
                 200,
                 {
                     success: true,
-                    message: "شماره موبایل با موفقیت تأیید شد.",
+                    message:
+                        "شماره موبایل با موفقیت تأیید شد.",
                     user: updatedUser
                 },
                 {
-                    "Set-Cookie": setSessionCookie(token)
+                    "Set-Cookie":
+                        setSessionCookie(token)
                 }
             );
 
@@ -464,7 +555,8 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 500, {
                 success: false,
-                message: "خطایی هنگام تأیید شماره رخ داد."
+                message:
+                    "خطایی هنگام تأیید شماره رخ داد."
             });
         }
     }
@@ -480,12 +572,15 @@ async function handleAPI(req, res) {
         try {
             const body = await readBody(req);
 
-            const phone = String(body.phone || "").trim();
+            const phone = String(
+                body.phone || ""
+            ).trim();
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "شماره موبایل معتبر نیست."
+                    message:
+                        "شماره موبایل معتبر نیست."
                 });
             }
 
@@ -498,7 +593,8 @@ async function handleAPI(req, res) {
             if (!user) {
                 return sendJSON(res, 404, {
                     success: false,
-                    message: "کاربری با این شماره وجود ندارد."
+                    message:
+                        "کاربری با این شماره وجود ندارد."
                 });
             }
 
@@ -508,7 +604,8 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 200, {
                 success: true,
-                message: "کد جدید ارسال شد."
+                message:
+                    "کد جدید ارسال شد."
             });
 
         } catch (error) {
@@ -516,7 +613,8 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 500, {
                 success: false,
-                message: "خطایی هنگام ارسال کد رخ داد."
+                message:
+                    "خطایی هنگام ارسال کد رخ داد."
             });
         }
     }
@@ -525,17 +623,26 @@ async function handleAPI(req, res) {
     // LOGIN
     // ==================================================
 
-    if (req.method === "POST" && req.url === "/api/login") {
+    if (
+        req.method === "POST" &&
+        req.url === "/api/login"
+    ) {
         try {
             const body = await readBody(req);
 
-            const phone = String(body.phone || "").trim();
-            const password = String(body.password || "");
+            const phone = String(
+                body.phone || ""
+            ).trim();
+
+            const password = String(
+                body.password || ""
+            );
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "شماره موبایل معتبر نیست."
+                    message:
+                        "شماره موبایل معتبر نیست."
                 });
             }
 
@@ -548,23 +655,25 @@ async function handleAPI(req, res) {
             if (!user) {
                 return sendJSON(res, 401, {
                     success: false,
-                    message: "شماره موبایل یا رمز عبور اشتباه است."
+                    message:
+                        "شماره موبایل یا رمز عبور اشتباه است."
                 });
             }
 
-            const passwordCorrect = await bcrypt.compare(
-                password,
-                user.password_hash
-            );
+            const passwordCorrect =
+                await bcrypt.compare(
+                    password,
+                    user.password_hash
+                );
 
             if (!passwordCorrect) {
                 return sendJSON(res, 401, {
                     success: false,
-                    message: "شماره موبایل یا رمز عبور اشتباه است."
+                    message:
+                        "شماره موبایل یا رمز عبور اشتباه است."
                 });
             }
 
-            // شماره باید تأیید شده باشد
             if (!user.phone_verified) {
                 const code = createOTP(phone);
 
@@ -573,28 +682,33 @@ async function handleAPI(req, res) {
                 return sendJSON(res, 403, {
                     success: false,
                     needsVerification: true,
-                    message: "شماره موبایل شما تأیید نشده است. کد جدید ارسال شد."
+                    message:
+                        "شماره موبایل شما تأیید نشده است. کد جدید ارسال شد."
                 });
             }
 
-            const token = createSession(user);
+            const token =
+                createSession(user);
 
             return sendJSON(
                 res,
                 200,
                 {
                     success: true,
-                    message: "ورود موفق بود.",
+                    message:
+                        "ورود موفق بود.",
                     user: {
                         id: user.id,
                         name: user.name,
                         phone: user.phone,
                         role: user.role,
-                        phone_verified: user.phone_verified
+                        phone_verified:
+                            user.phone_verified
                     }
                 },
                 {
-                    "Set-Cookie": setSessionCookie(token)
+                    "Set-Cookie":
+                        setSessionCookie(token)
                 }
             );
 
@@ -603,7 +717,8 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 500, {
                 success: false,
-                message: "خطایی هنگام ورود رخ داد."
+                message:
+                    "خطایی هنگام ورود رخ داد."
             });
         }
     }
@@ -612,14 +727,17 @@ async function handleAPI(req, res) {
     // CURRENT USER
     // ==================================================
 
-    if (req.method === "GET" && req.url === "/api/me") {
-
+    if (
+        req.method === "GET" &&
+        req.url === "/api/me"
+    ) {
         const user = getCurrentUser(req);
 
         if (!user) {
             return sendJSON(res, 401, {
                 success: false,
-                message: "وارد حساب نشده‌اید."
+                message:
+                    "وارد حساب نشده‌اید."
             });
         }
 
@@ -633,13 +751,15 @@ async function handleAPI(req, res) {
     // LOGOUT
     // ==================================================
 
-    if (req.method === "POST" && req.url === "/api/logout") {
+    if (
+        req.method === "POST" &&
+        req.url === "/api/logout"
+    ) {
+        const token =
+            getSessionToken(req);
 
-        const cookie = req.headers.cookie || "";
-        const match = cookie.match(/mta_session=([^;]+)/);
-
-        if (match) {
-            sessions.delete(match[1]);
+        if (token) {
+            sessions.delete(token);
         }
 
         return sendJSON(
@@ -647,10 +767,12 @@ async function handleAPI(req, res) {
             200,
             {
                 success: true,
-                message: "با موفقیت خارج شدید."
+                message:
+                    "با موفقیت خارج شدید."
             },
             {
-                "Set-Cookie": clearSessionCookie()
+                "Set-Cookie":
+                    clearSessionCookie()
             }
         );
     }
@@ -664,25 +786,27 @@ async function handleAPI(req, res) {
         req.url === "/api/projects"
     ) {
         try {
-            const user = getCurrentUser(req);
+            const user =
+                getCurrentUser(req);
 
-            // کاربر حتماً باید وارد شده باشد
             if (!user) {
                 return sendJSON(res, 401, {
                     success: false,
-                    message: "برای ثبت پروژه ابتدا وارد حساب خود شوید."
+                    message:
+                        "برای ثبت پروژه ابتدا وارد حساب خود شوید."
                 });
             }
 
-            // شماره موبایل هم باید تأیید شده باشد
             if (!user.phone_verified) {
                 return sendJSON(res, 403, {
                     success: false,
-                    message: "ابتدا شماره موبایل خود را تأیید کنید."
+                    message:
+                        "ابتدا شماره موبایل خود را تأیید کنید."
                 });
             }
 
-            const body = await readBody(req);
+            const body =
+                await readBody(req);
 
             const firstName = String(
                 body.firstName || ""
@@ -711,35 +835,40 @@ async function handleAPI(req, res) {
             if (!firstName || !lastName) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "نام و نام خانوادگی را وارد کنید."
+                    message:
+                        "نام و نام خانوادگی را وارد کنید."
                 });
             }
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "شماره موبایل معتبر نیست."
+                    message:
+                        "شماره موبایل معتبر نیست."
                 });
             }
 
             if (!projectType) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "نوع پروژه را انتخاب کنید."
+                    message:
+                        "نوع پروژه را انتخاب کنید."
                 });
             }
 
             if (!budget) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "بودجه پروژه را انتخاب کنید."
+                    message:
+                        "بودجه پروژه را انتخاب کنید."
                 });
             }
 
             if (description.length < 10) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "توضیحات پروژه باید حداقل ۱۰ کاراکتر باشد."
+                    message:
+                        "توضیحات پروژه باید حداقل ۱۰ کاراکتر باشد."
                 });
             }
 
@@ -767,8 +896,10 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 201, {
                 success: true,
-                message: "درخواست پروژه با موفقیت ثبت شد.",
-                projectId: result.lastInsertRowid
+                message:
+                    "درخواست پروژه با موفقیت ثبت شد.",
+                projectId:
+                    result.lastInsertRowid
             });
 
         } catch (error) {
@@ -776,7 +907,8 @@ async function handleAPI(req, res) {
 
             return sendJSON(res, 500, {
                 success: false,
-                message: "خطایی هنگام ثبت پروژه رخ داد."
+                message:
+                    "خطایی هنگام ثبت پروژه رخ داد."
             });
         }
     }
@@ -789,13 +921,14 @@ async function handleAPI(req, res) {
         req.method === "GET" &&
         req.url === "/api/projects"
     ) {
-
-        const user = getCurrentUser(req);
+        const user =
+            getCurrentUser(req);
 
         if (!user) {
             return sendJSON(res, 401, {
                 success: false,
-                message: "ابتدا وارد حساب شوید."
+                message:
+                    "ابتدا وارد حساب شوید."
             });
         }
 
@@ -828,164 +961,264 @@ async function handleAPI(req, res) {
 }
 
 // ======================================================
-// STATIC FILE SERVER
+// HTTP SERVER
 // ======================================================
 
-const server = http.createServer(async (req, res) => {
+const server = http.createServer(
+    async (req, res) => {
 
-    try {
+        try {
 
-        // ==================================================
-        // CORS
-        // ==================================================
+            // ==================================================
+            // CORS
+            // ==================================================
 
-        res.setHeader(
-            "Access-Control-Allow-Origin",
-            "*"
-        );
+            if (FRONTEND_ORIGIN === "*") {
+                res.setHeader(
+                    "Access-Control-Allow-Origin",
+                    "*"
+                );
+            } else {
+                res.setHeader(
+                    "Access-Control-Allow-Origin",
+                    FRONTEND_ORIGIN
+                );
 
-        res.setHeader(
-            "Access-Control-Allow-Methods",
-            "GET, POST, OPTIONS"
-        );
+                res.setHeader(
+                    "Access-Control-Allow-Credentials",
+                    "true"
+                );
 
-        res.setHeader(
-            "Access-Control-Allow-Headers",
-            "Content-Type"
-        );
+                res.setHeader(
+                    "Vary",
+                    "Origin"
+                );
+            }
 
-        // ==================================================
-        // PREFLIGHT
-        // ==================================================
-
-        if (req.method === "OPTIONS") {
-            res.writeHead(204);
-            return res.end();
-        }
-
-        // ==================================================
-        // API
-        // ==================================================
-
-        if (req.url.startsWith("/api/")) {
-            return await handleAPI(req, res);
-        }
-
-        // ==================================================
-        // HOME
-        // ==================================================
-
-        if (
-            req.url === "/" ||
-            req.url === "/index.html"
-        ) {
-
-            const indexPath = path.join(
-                __dirname,
-                "index.html"
+            res.setHeader(
+                "Access-Control-Allow-Methods",
+                "GET, POST, OPTIONS"
             );
 
-            if (fs.existsSync(indexPath)) {
+            res.setHeader(
+                "Access-Control-Allow-Headers",
+                "Content-Type"
+            );
+
+            // ==================================================
+            // PREFLIGHT
+            // ==================================================
+
+            if (req.method === "OPTIONS") {
+                res.writeHead(204);
+                return res.end();
+            }
+
+            // ==================================================
+            // API
+            // ==================================================
+
+            if (
+                req.url.startsWith("/api/")
+            ) {
+                return await handleAPI(
+                    req,
+                    res
+                );
+            }
+
+            // ==================================================
+            // HOME
+            // ==================================================
+
+            if (
+                req.url === "/" ||
+                req.url === "/index.html"
+            ) {
+                const indexPath =
+                    path.join(
+                        __dirname,
+                        "index.html"
+                    );
+
+                if (
+                    fs.existsSync(indexPath)
+                ) {
+                    res.writeHead(200, {
+                        "Content-Type":
+                            "text/html; charset=utf-8"
+                    });
+
+                    return fs
+                        .createReadStream(indexPath)
+                        .pipe(res);
+                }
 
                 res.writeHead(200, {
                     "Content-Type":
                         "text/html; charset=utf-8"
                 });
 
+                return res.end(`
+                    <h1>MTA Studio</h1>
+                    <p>Backend is running.</p>
+                `);
+            }
+
+            // ==================================================
+            // STATIC FILES
+            // ==================================================
+
+            const requestedPath =
+                decodeURIComponent(
+                    req.url.split("?")[0]
+                );
+
+            const normalizedPath =
+                path.normalize(
+                    requestedPath
+                );
+
+            const filePath =
+                path.join(
+                    __dirname,
+                    normalizedPath
+                );
+
+            const rootPath =
+                path.resolve(__dirname);
+
+            const resolvedFilePath =
+                path.resolve(filePath);
+
+            if (
+                resolvedFilePath.startsWith(
+                    rootPath + path.sep
+                ) &&
+                fs.existsSync(
+                    resolvedFilePath
+                ) &&
+                fs.statSync(
+                    resolvedFilePath
+                ).isFile()
+            ) {
+
+                const ext =
+                    path.extname(
+                        resolvedFilePath
+                    ).toLowerCase();
+
+                const contentTypes = {
+                    ".html":
+                        "text/html; charset=utf-8",
+
+                    ".css":
+                        "text/css; charset=utf-8",
+
+                    ".js":
+                        "application/javascript; charset=utf-8",
+
+                    ".json":
+                        "application/json; charset=utf-8",
+
+                    ".png":
+                        "image/png",
+
+                    ".jpg":
+                        "image/jpeg",
+
+                    ".jpeg":
+                        "image/jpeg",
+
+                    ".svg":
+                        "image/svg+xml",
+
+                    ".ico":
+                        "image/x-icon",
+
+                    ".webp":
+                        "image/webp"
+                };
+
+                res.writeHead(200, {
+                    "Content-Type":
+                        contentTypes[ext] ||
+                        "application/octet-stream"
+                });
+
                 return fs
-                    .createReadStream(indexPath)
+                    .createReadStream(
+                        resolvedFilePath
+                    )
                     .pipe(res);
             }
 
-            res.writeHead(200, {
-                "Content-Type":
-                    "text/html; charset=utf-8"
-            });
+            // ==================================================
+            // NOT FOUND
+            // ==================================================
 
-            return res.end(`
-                <h1>MTA Studio</h1>
-                <p>Backend is running.</p>
-            `);
+            res.writeHead(404);
+            res.end("Not Found");
+
+        } catch (error) {
+
+            console.error(
+                "SERVER ERROR:",
+                error
+            );
+
+            if (!res.headersSent) {
+                res.writeHead(500, {
+                    "Content-Type":
+                        "text/plain; charset=utf-8"
+                });
+            }
+
+            res.end(
+                "Internal Server Error"
+            );
         }
-
-        // ==================================================
-        // STATIC FILES
-        // ==================================================
-
-        const requestedPath = decodeURIComponent(
-            req.url.split("?")[0]
-        );
-
-        const filePath = path.join(
-            __dirname,
-            requestedPath
-        );
-
-        if (
-            filePath.startsWith(__dirname) &&
-            fs.existsSync(filePath) &&
-            fs.statSync(filePath).isFile()
-        ) {
-
-            const ext = path.extname(filePath).toLowerCase();
-
-            const contentTypes = {
-                ".html": "text/html; charset=utf-8",
-                ".css": "text/css; charset=utf-8",
-                ".js": "application/javascript; charset=utf-8",
-                ".json": "application/json; charset=utf-8",
-                ".png": "image/png",
-                ".jpg": "image/jpeg",
-                ".jpeg": "image/jpeg",
-                ".svg": "image/svg+xml",
-                ".ico": "image/x-icon",
-                ".webp": "image/webp"
-            };
-
-            res.writeHead(200, {
-                "Content-Type":
-                    contentTypes[ext] ||
-                    "application/octet-stream"
-            });
-
-            return fs
-                .createReadStream(filePath)
-                .pipe(res);
-        }
-
-        // ==================================================
-        // NOT FOUND
-        // ==================================================
-
-        res.writeHead(404);
-        res.end("Not Found");
-
-    } catch (error) {
-
-        console.error(error);
-
-        res.writeHead(500);
-        res.end("Internal Server Error");
     }
-});
+);
 
 // ======================================================
 // START SERVER
 // ======================================================
 
-server.listen(PORT, "0.0.0.0", () => {
+server.listen(
+    PORT,
+    "0.0.0.0",
+    () => {
 
-    console.log("");
-    console.log("================================");
-    console.log("       MTA STUDIO BACKEND");
-    console.log("================================");
-    console.log(`Server running on port ${PORT}`);
-    console.log("Database: connected");
-    console.log("Authentication: ready");
-    console.log("OTP system: ready");
-    console.log("Projects API: ready");
-    console.log("================================");
-    console.log("");
-
-});
+        console.log("");
+        console.log(
+            "================================"
+        );
+        console.log(
+            "       MTA STUDIO BACKEND"
+        );
+        console.log(
+            "================================"
+        );
+        console.log(
+            `Server running on port ${PORT}`
+        );
+        console.log(
+            "Database: connected"
+        );
+        console.log(
+            "Authentication: ready"
+        );
+        console.log(
+            "OTP system: ready"
+        );
+        console.log(
+            "Projects API: ready"
+        );
+        console.log(
+            "================================"
+        );
+        console.log("");
+    }
+);
 ```
