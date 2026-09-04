@@ -1,5 +1,5 @@
-```html
 <!DOCTYPE html>
+
 <html lang="fa" dir="rtl">
 
 <head>
@@ -59,11 +59,19 @@ body{
     isolation:isolate;
 }
 
+
+/* =====================================================
+   BACKGROUND
+===================================================== */
+
 .noise{
     position:fixed;
     inset:0;
+
     pointer-events:none;
+
     z-index:-1;
+
     opacity:.18;
 
     background:
@@ -72,11 +80,13 @@ body{
             rgba(255,122,0,.14),
             transparent 28%
         ),
+
         radial-gradient(
             circle at 85% 25%,
             rgba(255,122,0,.10),
             transparent 25%
         ),
+
         radial-gradient(
             circle at 50% 85%,
             rgba(255,145,43,.08),
@@ -87,7 +97,9 @@ body{
 .grid{
     position:fixed;
     inset:0;
+
     pointer-events:none;
+
     z-index:-2;
 
     background:
@@ -95,6 +107,7 @@ body{
             rgba(255,255,255,.025) 1px,
             transparent 1px
         ),
+
         linear-gradient(
             90deg,
             rgba(255,255,255,.025) 1px,
@@ -113,10 +126,15 @@ body{
 
 .orb{
     position:fixed;
+
     border-radius:50%;
+
     filter:blur(80px);
+
     pointer-events:none;
+
     z-index:-1;
+
     opacity:.42;
 
     animation:
@@ -130,7 +148,9 @@ body{
 .orb.one{
     width:330px;
     height:330px;
+
     background:#ff6a00;
+
     top:-120px;
     right:-90px;
 }
@@ -138,9 +158,12 @@ body{
 .orb.two{
     width:270px;
     height:270px;
+
     background:#7b2f00;
+
     bottom:5%;
     left:-90px;
+
     animation-delay:-4s;
 }
 
@@ -159,22 +182,35 @@ body{
     }
 }
 
+
+/* =====================================================
+   HEADER
+===================================================== */
+
 header{
     position:fixed;
+
     top:0;
     left:0;
+
     width:100%;
+
     z-index:100;
+
     padding:18px 6vw;
 }
 
 .nav{
     max-width:1280px;
+
     margin:auto;
 
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
+
     gap:20px;
 
     padding:14px 18px;
@@ -197,10 +233,15 @@ header{
 
 .brand{
     display:flex;
+
     align-items:center;
+
     gap:10px;
+
     font-weight:900;
+
     letter-spacing:.5px;
+
     direction:ltr;
 }
 
@@ -209,6 +250,7 @@ header{
     height:40px;
 
     display:grid;
+
     place-items:center;
 
     border-radius:14px;
@@ -256,7 +298,9 @@ header{
 
 .nav-links{
     display:flex;
+
     gap:7px;
+
     align-items:center;
 }
 
@@ -302,11 +346,18 @@ header{
         rgba(255,122,0,.07);
 }
 
+
+/* =====================================================
+   HERO
+===================================================== */
+
 .hero{
     min-height:100svh;
 
     display:flex;
+
     align-items:center;
+
     justify-content:center;
 
     text-align:center;
@@ -321,12 +372,15 @@ header{
 
 .hero-inner{
     width:min(1100px,100%);
+
     margin:auto;
+
     position:relative;
 }
 
 .pill{
     width:max-content;
+
     max-width:100%;
 
     margin:
@@ -432,6 +486,7 @@ header{
 
 .typed{
     display:inline-block;
+
     white-space:nowrap;
 }
 
@@ -439,6 +494,7 @@ header{
     display:inline-block;
 
     width:5px;
+
     height:.85em;
 
     background:
@@ -462,6 +518,7 @@ header{
 }
 
 @keyframes blink{
+
     50%{
         opacity:0;
     }
@@ -497,6 +554,7 @@ header{
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     flex-wrap:wrap;
@@ -584,6 +642,11 @@ header{
         translateY(-4px);
 }
 
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
 section{
     padding:
         110px
@@ -594,19 +657,25 @@ section{
 
 .container{
     max-width:1240px;
+
     margin:auto;
 }
 
 .section-title{
     text-align:center;
+
     margin-bottom:54px;
 }
 
 .eyebrow{
     color:var(--orange-2);
+
     font-weight:800;
+
     font-size:14px;
+
     margin-bottom:10px;
+
     letter-spacing:.4px;
 }
 
@@ -619,23 +688,30 @@ section{
         );
 
     line-height:1.25;
+
     margin-bottom:15px;
 }
 
 .section-title p{
     color:var(--muted);
+
     max-width:680px;
+
     margin:auto;
+
     line-height:1.9;
+
     font-size:16px;
 }
 
 .services-grid{
     display:grid;
+
     grid-template-columns:
         repeat(3,1fr);
 
     gap:24px;
+
     perspective:1000px;
 }
 
@@ -693,13 +769,16 @@ section{
     position:absolute;
 
     top:26px;
+
     left:28px;
 
     color:
         rgba(255,255,255,.11);
 
     font-size:52px;
+
     font-weight:900;
+
     direction:ltr;
 }
 
@@ -708,6 +787,7 @@ section{
     height:66px;
 
     display:grid;
+
     place-items:center;
 
     border-radius:20px;
@@ -742,12 +822,15 @@ section{
 
 .service-card h3{
     font-size:25px;
+
     margin-bottom:15px;
 }
 
 .service-card p{
     color:#aaaab3;
+
     font-size:15px;
+
     line-height:2;
 }
 
@@ -763,8 +846,7 @@ section{
     font-size:12px;
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,122,0,.18);
 
     border-radius:999px;
@@ -775,13 +857,18 @@ section{
         rgba(255,122,0,.06);
 }
 
+
+/* =====================================================
+   CTA
+===================================================== */
+
 .cta-wrap{
     position:relative;
+
     overflow:hidden;
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,255,255,.09);
 
     border-radius:38px;
@@ -879,6 +966,7 @@ section{
     cursor:pointer;
 
     border:0;
+
     font-family:inherit;
 }
 
@@ -891,6 +979,11 @@ section{
         0 20px 62px
         rgba(255,122,0,.48);
 }
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
 
 footer{
     padding:
@@ -915,8 +1008,7 @@ footer{
     padding-top:28px;
 
     border-top:
-        1px
-        solid
+        1px solid
         var(--line);
 
     color:#85858f;
@@ -926,9 +1018,16 @@ footer{
 
 .footer-brand{
     color:#e7e7eb;
+
     font-weight:800;
+
     direction:ltr;
 }
+
+
+/* =====================================================
+   BACK TO TOP
+===================================================== */
 
 .back-to-top{
     position:fixed;
@@ -940,8 +1039,7 @@ footer{
     height:54px;
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,122,0,.32);
 
     border-radius:17px;
@@ -952,6 +1050,7 @@ footer{
     color:#fff;
 
     display:grid;
+
     place-items:center;
 
     font-size:25px;
@@ -961,6 +1060,7 @@ footer{
     z-index:90;
 
     opacity:0;
+
     visibility:hidden;
 
     transform:
@@ -974,6 +1074,7 @@ footer{
 
 .back-to-top.show{
     opacity:1;
+
     visibility:visible;
 
     transform:
@@ -981,14 +1082,22 @@ footer{
         scale(1);
 }
 
+
+/* =====================================================
+   AUTH MODAL
+===================================================== */
+
 .auth-overlay{
     position:fixed;
+
     inset:0;
+
     z-index:1000;
 
     display:flex;
 
     align-items:center;
+
     justify-content:center;
 
     padding:20px;
@@ -999,6 +1108,7 @@ footer{
     backdrop-filter:blur(16px);
 
     opacity:0;
+
     visibility:hidden;
 
     transition:.35s ease;
@@ -1006,6 +1116,7 @@ footer{
 
 .auth-overlay.active{
     opacity:1;
+
     visibility:visible;
 }
 
@@ -1021,8 +1132,7 @@ footer{
     padding:34px;
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,122,0,.22);
 
     border-radius:30px;
@@ -1064,8 +1174,7 @@ footer{
     height:38px;
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,255,255,.08);
 
     border-radius:12px;
@@ -1111,7 +1220,9 @@ footer{
 
 .auth-title{
     text-align:center;
+
     font-size:28px;
+
     margin-bottom:8px;
 }
 
@@ -1197,8 +1308,7 @@ footer{
         15px;
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,255,255,.09);
 
     border-radius:14px;
@@ -1290,8 +1400,7 @@ footer{
         rgba(255,60,40,.08);
 
     border:
-        1px
-        solid
+        1px solid
         rgba(255,60,40,.15);
 }
 
@@ -1302,8 +1411,7 @@ footer{
         rgba(40,255,100,.07);
 
     border:
-        1px
-        solid
+        1px solid
         rgba(40,255,100,.13);
 }
 
@@ -1320,7 +1428,8 @@ footer{
 }
 
 .otp-phone{
-    color:var(--orange-2);
+    color:
+        var(--orange-2);
 
     direction:ltr;
 
@@ -1359,6 +1468,11 @@ footer{
 
     font-family:inherit;
 }
+
+
+/* =====================================================
+   LOGGED USER
+===================================================== */
 
 .user-state{
     display:none;
@@ -1404,6 +1518,11 @@ footer{
 
     font-family:inherit;
 }
+
+
+/* =====================================================
+   REVEAL
+===================================================== */
 
 .reveal{
     opacity:0;
@@ -1452,6 +1571,11 @@ footer{
     }
 }
 
+
+/* =====================================================
+   MOUSE GLOW
+===================================================== */
+
 .mouse-glow{
     position:fixed;
 
@@ -1474,6 +1598,11 @@ footer{
     transform:
         translate(-50%,-50%);
 }
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 
 @media(max-width:900px){
 
@@ -1524,6 +1653,7 @@ footer{
 
     .footer-inner{
         flex-direction:column;
+
         text-align:center;
     }
 
@@ -1540,6 +1670,7 @@ footer{
 }
 
 </style>
+
 </head>
 
 <body>
@@ -1556,59 +1687,63 @@ footer{
 
 <nav class="nav">
 
-    <div class="brand">
+```
+<div class="brand">
 
-        <div class="brand-mark">
-            MTA
-        </div>
-
-        <div class="brand-text">
-            MTA Studio
-        </div>
-
+    <div class="brand-mark">
+        MTA
     </div>
 
-    <div class="nav-links">
-
-        <a href="#home">
-            خانه
-        </a>
-
-        <a href="#services">
-            خدمات
-        </a>
-
-        <a href="#start">
-            ثبت پروژه
-        </a>
-
-        <button
-            class="login-button"
-            id="openAuth"
-        >
-            ورود / ثبت‌نام
-        </button>
-
+    <div class="brand-text">
+        MTA Studio
     </div>
 
-    <div
-        class="user-state"
-        id="userState"
+</div>
+
+
+<div class="nav-links">
+
+    <a href="#home">
+        خانه
+    </a>
+
+    <a href="#services">
+        خدمات
+    </a>
+
+    <a href="#start">
+        ثبت پروژه
+    </a>
+
+    <button
+        class="login-button"
+        id="openAuth"
     >
+        ورود / ثبت‌نام
+    </button>
 
-        <span
-            class="user-name"
-            id="userName"
-        ></span>
+</div>
 
-        <button
-            class="logout-btn"
-            id="logoutBtn"
-        >
-            خروج
-        </button>
 
-    </div>
+<div
+    class="user-state"
+    id="userState"
+>
+
+    <span
+        class="user-name"
+        id="userName"
+    ></span>
+
+    <button
+        class="logout-btn"
+        id="logoutBtn"
+    >
+        خروج
+    </button>
+
+</div>
+```
 
 </nav>
 
@@ -1623,57 +1758,62 @@ footer{
 
 <div class="hero-inner">
 
-    <div class="pill">
-        استودیو خلاقیت دیجیتال • MTA Studio
-    </div>
+```
+<div class="pill">
+    استودیو خلاقیت دیجیتال • MTA Studio
+</div>
 
-    <h1>
 
-        <span class="brand-big">
-            ام . تی . ای
-        </span>
+<h1>
 
-        <span class="dash">
-            —
-        </span>
+    <span class="brand-big">
+        ام . تی . ای
+    </span>
 
-        <span class="typing-wrap">
+    <span class="dash">
+        —
+    </span>
 
-            <span
-                class="typed"
-                id="typedText"
-            ></span>
+    <span class="typing-wrap">
 
-            <span class="cursor"></span>
+        <span
+            class="typed"
+            id="typedText"
+        ></span>
 
-        </span>
+        <span class="cursor"></span>
 
-    </h1>
+    </span>
 
-    <p>
-        جایی که ایده‌ها فقط در حد فکر باقی نمی‌مانند.
-        ما با ترکیب خلاقیت، طراحی و تکنولوژی،
-        پروژه‌های دیجیتال شما را به تجربه‌ای
-        حرفه‌ای، چشم‌گیر و ماندگار تبدیل می‌کنیم.
-    </p>
+</h1>
 
-    <div class="hero-actions">
 
-        <a
-            href="#services"
-            class="btn primary"
-        >
-            مشاهده خدمات
-        </a>
+<p>
+    جایی که ایده‌ها فقط در حد فکر باقی نمی‌مانند.
+    ما با ترکیب خلاقیت، طراحی و تکنولوژی،
+    پروژه‌های دیجیتال شما را به تجربه‌ای
+    حرفه‌ای، چشم‌گیر و ماندگار تبدیل می‌کنیم.
+</p>
 
-        <a
-            href="#start"
-            class="btn secondary"
-        >
-            شروع یک پروژه
-        </a>
 
-    </div>
+<div class="hero-actions">
+
+    <a
+        href="#services"
+        class="btn primary"
+    >
+        مشاهده خدمات
+    </a>
+
+    <a
+        href="#start"
+        class="btn secondary"
+    >
+        شروع یک پروژه
+    </a>
+
+</div>
+```
 
 </div>
 
@@ -1683,108 +1823,115 @@ footer{
 
 <div class="container">
 
-    <div class="section-title reveal">
+```
+<div class="section-title reveal">
 
-        <div class="eyebrow">
-            خدمات MTA STUDIO
+    <div class="eyebrow">
+        خدمات MTA STUDIO
+    </div>
+
+    <h2>
+        سه مسیر برای تبدیل ایده به یک خروجی حرفه‌ای
+    </h2>
+
+    <p>
+        از تدوین ویدیو تا طراحی وب و توسعه ربات؛
+        هر پروژه با تمرکز روی کیفیت، هویت بصری
+        و تجربه کاربری اجرا می‌شود.
+    </p>
+
+</div>
+
+
+<div class="services-grid">
+
+
+    <article class="service-card reveal">
+
+        <span class="service-number">
+            01
+        </span>
+
+        <div class="icon">
+            🎬
         </div>
 
-        <h2>
-            سه مسیر برای تبدیل ایده به یک خروجی حرفه‌ای
-        </h2>
+        <h3>
+            تدوین ویدیو
+        </h3>
 
         <p>
-            از تدوین ویدیو تا طراحی وب و توسعه ربات؛
-            هر پروژه با تمرکز روی کیفیت، هویت بصری
-            و تجربه کاربری اجرا می‌شود.
+            تدوین حرفه‌ای برای محتوای شبکه‌های اجتماعی،
+            ویدیوهای تبلیغاتی، کلیپ‌های کوتاه و پروژه‌های
+            شخصی با تمرکز روی ریتم، روایت و هویت بصری.
         </p>
 
-    </div>
+        <span class="service-tag">
+            Video Editing
+        </span>
 
-    <div class="services-grid">
+    </article>
 
-        <article class="service-card reveal">
 
-            <span class="service-number">
-                01
-            </span>
+    <article class="service-card reveal">
 
-            <div class="icon">
-                🎬
-            </div>
+        <span class="service-number">
+            02
+        </span>
 
-            <h3>
-                تدوین ویدیو
-            </h3>
+        <div class="icon">
+            ◈
+        </div>
 
-            <p>
-                تدوین حرفه‌ای برای محتوای شبکه‌های اجتماعی،
-                ویدیوهای تبلیغاتی، کلیپ‌های کوتاه و پروژه‌های
-                شخصی با تمرکز روی ریتم، روایت و هویت بصری.
-            </p>
+        <h3>
+            طراحی وب
+        </h3>
 
-            <span class="service-tag">
-                Video Editing
-            </span>
+        <p>
+            طراحی وب‌سایت‌های مدرن، واکنش‌گرا و سریع
+            با ظاهر اختصاصی، انیمیشن‌های جذاب و
+            تجربه کاربری حرفه‌ای.
+        </p>
 
-        </article>
+        <span class="service-tag">
+            Web Design
+        </span>
 
-        <article class="service-card reveal">
+    </article>
 
-            <span class="service-number">
-                02
-            </span>
 
-            <div class="icon">
-                ◈
-            </div>
+    <article class="service-card reveal">
 
-            <h3>
-                طراحی وب
-            </h3>
+        <span class="service-number">
+            03
+        </span>
 
-            <p>
-                طراحی وب‌سایت‌های مدرن، واکنش‌گرا و سریع
-                با ظاهر اختصاصی، انیمیشن‌های جذاب و
-                تجربه کاربری حرفه‌ای.
-            </p>
+        <div class="icon">
+            🤖
+        </div>
 
-            <span class="service-tag">
-                Web Design
-            </span>
+        <h3>
+            ساخت ربات
+        </h3>
 
-        </article>
+        <p>
+            طراحی و توسعه ربات‌های کاربردی و سفارشی
+            برای پیام‌رسان‌های
+            <strong style="color:#ffd2aa">
+                بله و تلگرام
+            </strong>
+            با امکانات اختصاصی متناسب با نیاز پروژه.
+        </p>
 
-        <article class="service-card reveal">
+        <span class="service-tag">
+            Bot Development
+        </span>
 
-            <span class="service-number">
-                03
-            </span>
+    </article>
 
-            <div class="icon">
-                🤖
-            </div>
 
-            <h3>
-                ساخت ربات
-            </h3>
-
-            <p>
-                طراحی و توسعه ربات‌های کاربردی و سفارشی
-                برای پیام‌رسان‌های
-                <strong style="color:#ffd2aa">
-                    بله و تلگرام
-                </strong>
-                با امکانات اختصاصی متناسب با نیاز پروژه.
-            </p>
-
-            <span class="service-tag">
-                Bot Development
-            </span>
-
-        </article>
-
-    </div>
+</div>
+```
 
 </div>
 
@@ -1796,34 +1943,36 @@ footer{
 
 <div class="cta-wrap reveal">
 
-    <div class="eyebrow">
-        از ایده تا اجرا
-    </div>
+```
+<div class="eyebrow">
+    از ایده تا اجرا
+</div>
 
-    <h2>
-        وقتشه ایده‌تون رو به
-        <span>
-            یک اثر واقعی
-        </span>
-        تبدیل کنیم.
-    </h2>
+<h2>
+    وقتشه ایده‌تون رو به
+    <span>
+        یک اثر واقعی
+    </span>
+    تبدیل کنیم.
+</h2>
 
-    <p>
-        ایده‌تان را با ما در میان بگذارید.
-        تیم MTA Studio آماده است تا با ترکیب
-        خلاقیت، طراحی و تکنولوژی، مسیر تبدیل
-        ایده شما به یک پروژه حرفه‌ای را آغاز کند.
-    </p>
+<p>
+    ایده‌تان را با ما در میان بگذارید.
+    تیم MTA Studio آماده است تا با ترکیب
+    خلاقیت، طراحی و تکنولوژی، مسیر تبدیل
+    ایده شما به یک پروژه حرفه‌ای را آغاز کند.
+</p>
 
-    <button
-        class="cta-main"
-        id="projectButton"
-    >
-        ثبت درخواست پروژه
-        <span>
-            ←
-        </span>
-    </button>
+<button
+    class="cta-main"
+    id="projectButton"
+>
+    ثبت درخواست پروژه
+    <span>
+        ←
+    </span>
+</button>
+```
 
 </div>
 
@@ -1834,25 +1983,32 @@ footer{
 </main>
 
 <button
-    class="back-to-top"
-    id="backToTop"
-    aria-label="بازگشت به بالا"
+class="back-to-top"
+id="backToTop"
+aria-label="بازگشت به بالا"
+
 >
-    ↑
+
+```
+↑
+```
+
 </button>
 
 <footer>
 
 <div class="footer-inner">
 
-    <div class="footer-brand">
-        MTA Studio
-    </div>
+```
+<div class="footer-brand">
+    MTA Studio
+</div>
 
-    <div>
-        تمامی حقوق این وب‌سایت محفوظ است ©
-        <span id="year"></span>
-    </div>
+<div>
+    تمامی حقوق این وب‌سایت محفوظ است ©
+    <span id="year"></span>
+</div>
+```
 
 </div>
 
@@ -1866,10 +2022,15 @@ footer{
 <div class="auth-box">
 
 <button
-    class="auth-close"
-    id="authClose"
+class="auth-close"
+id="authClose"
+
 >
-    ×
+
+```
+×
+```
+
 </button>
 
 <div class="auth-logo">
@@ -1896,17 +2057,27 @@ footer{
 >
 
 <button
-    class="auth-tab active"
-    data-tab="login"
+class="auth-tab active"
+data-tab="login"
+
 >
-    ورود
+
+```
+ورود
+```
+
 </button>
 
 <button
-    class="auth-tab"
-    data-tab="signup"
+class="auth-tab"
+data-tab="signup"
+
 >
-    ثبت‌نام
+
+```
+ثبت‌نام
+```
+
 </button>
 
 </div>
@@ -1928,11 +2099,12 @@ footer{
 </label>
 
 <input
-    type="tel"
-    id="loginPhone"
-    placeholder="09123456789"
-    maxlength="11"
-    autocomplete="tel"
+type="tel"
+id="loginPhone"
+placeholder="09123456789"
+maxlength="11"
+autocomplete="tel"
+
 >
 
 </div>
@@ -1944,19 +2116,25 @@ footer{
 </label>
 
 <input
-    type="password"
-    id="loginPassword"
-    placeholder="رمز عبور"
-    autocomplete="current-password"
+type="password"
+id="loginPassword"
+placeholder="رمز عبور"
+autocomplete="current-password"
+
 >
 
 </div>
 
 <button
-    class="auth-submit"
-    type="submit"
+class="auth-submit"
+type="submit"
+
 >
-    ورود به حساب
+
+```
+ورود به حساب
+```
+
 </button>
 
 </form>
@@ -1973,10 +2151,11 @@ footer{
 </label>
 
 <input
-    type="text"
-    id="signupName"
-    placeholder="مثلاً محمد محمدی"
-    autocomplete="name"
+type="text"
+id="signupName"
+placeholder="مثلاً محمد محمدی"
+autocomplete="name"
+
 >
 
 </div>
@@ -1988,11 +2167,12 @@ footer{
 </label>
 
 <input
-    type="tel"
-    id="signupPhone"
-    placeholder="09123456789"
-    maxlength="11"
-    autocomplete="tel"
+type="tel"
+id="signupPhone"
+placeholder="09123456789"
+maxlength="11"
+autocomplete="tel"
+
 >
 
 </div>
@@ -2004,19 +2184,25 @@ footer{
 </label>
 
 <input
-    type="password"
-    id="signupPassword"
-    placeholder="حداقل ۶ کاراکتر"
-    autocomplete="new-password"
+type="password"
+id="signupPassword"
+placeholder="حداقل ۶ کاراکتر"
+autocomplete="new-password"
+
 >
 
 </div>
 
 <button
-    class="auth-submit"
-    type="submit"
+class="auth-submit"
+type="submit"
+
 >
-    ساخت حساب
+
+```
+ساخت حساب
+```
+
 </button>
 
 </form>
@@ -2028,48 +2214,61 @@ footer{
 
 <div class="otp-info">
 
-    کد ۶ رقمی ارسال‌شده برای شماره
+```
+کد ۶ رقمی ارسال‌شده برای شماره
 
-    <br>
+<br>
 
-    <span
-        class="otp-phone"
-        id="otpPhone"
-    ></span>
+<span
+    class="otp-phone"
+    id="otpPhone"
+></span>
 
-    <br>
+<br>
 
-    را وارد کنید.
+را وارد کنید.
+```
 
 </div>
 
 <div class="input-group">
 
 <input
-    class="otp-input"
-    type="text"
-    id="otpCode"
-    maxlength="6"
-    inputmode="numeric"
-    autocomplete="one-time-code"
-    placeholder="••••••"
+class="otp-input"
+type="text"
+id="otpCode"
+maxlength="6"
+inputmode="numeric"
+autocomplete="one-time-code"
+placeholder="••••••"
+
 >
 
 </div>
 
 <button
-    class="auth-submit"
-    type="submit"
+class="auth-submit"
+type="submit"
+
 >
-    تأیید شماره
+
+```
+تأیید شماره
+```
+
 </button>
 
 <button
-    class="resend"
-    type="button"
-    id="resendOtp"
+class="resend"
+type="button"
+id="resendOtp"
+
 >
-    ارسال مجدد کد
+
+```
+ارسال مجدد کد
+```
+
 </button>
 
 </form>
@@ -2081,11 +2280,38 @@ footer{
 <script>
 
 /* =====================================================
-   BACKEND
+   BACKEND CONFIG
 ===================================================== */
 
 const API_BASE_URL =
     "https://mta-studio-backend.onrender.com";
+
+
+/* =====================================================
+   API HELPER
+===================================================== */
+
+async function apiFetch(
+    endpoint,
+    options = {}
+){
+
+    const finalOptions = {
+        ...options,
+
+        credentials:
+            "include",
+
+        headers:{
+            ...(options.headers || {})
+        }
+    };
+
+    return fetch(
+        API_BASE_URL + endpoint,
+        finalOptions
+    );
+}
 
 
 /* =====================================================
@@ -2184,7 +2410,9 @@ setTimeout(
 ===================================================== */
 
 const revealItems =
-    document.querySelectorAll(".reveal");
+    document.querySelectorAll(
+        ".reveal"
+    );
 
 const observer =
     new IntersectionObserver(
@@ -2234,7 +2462,9 @@ revealItems.forEach(
 ===================================================== */
 
 const mouseGlow =
-    document.getElementById("mouseGlow");
+    document.getElementById(
+        "mouseGlow"
+    );
 
 window.addEventListener(
     "pointermove",
@@ -2255,13 +2485,17 @@ window.addEventListener(
 ===================================================== */
 
 const backToTop =
-    document.getElementById("backToTop");
+    document.getElementById(
+        "backToTop"
+    );
 
 window.addEventListener(
     "scroll",
     () => {
 
-        if(window.scrollY > 650){
+        if(
+            window.scrollY > 650
+        ){
 
             backToTop
                 .classList
@@ -2298,87 +2532,92 @@ backToTop.addEventListener(
 ===================================================== */
 
 const authOverlay =
-    document.getElementById("authOverlay");
+    document.getElementById(
+        "authOverlay"
+    );
 
 const authClose =
-    document.getElementById("authClose");
+    document.getElementById(
+        "authClose"
+    );
 
 const openAuth =
-    document.getElementById("openAuth");
+    document.getElementById(
+        "openAuth"
+    );
 
 const projectButton =
-    document.getElementById("projectButton");
+    document.getElementById(
+        "projectButton"
+    );
 
 const authMessage =
-    document.getElementById("authMessage");
+    document.getElementById(
+        "authMessage"
+    );
 
 const authTabs =
-    document.querySelectorAll(".auth-tab");
+    document.querySelectorAll(
+        ".auth-tab"
+    );
 
 const loginForm =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "loginForm"
+    );
 
 const signupForm =
-    document.getElementById("signupForm");
+    document.getElementById(
+        "signupForm"
+    );
 
 const otpForm =
-    document.getElementById("otpForm");
+    document.getElementById(
+        "otpForm"
+    );
 
 const authTabsBox =
-    document.getElementById("authTabs");
+    document.getElementById(
+        "authTabs"
+    );
 
 const authTitle =
-    document.getElementById("authTitle");
+    document.getElementById(
+        "authTitle"
+    );
 
 const authSubtitle =
-    document.getElementById("authSubtitle");
+    document.getElementById(
+        "authSubtitle"
+    );
 
 const otpPhone =
-    document.getElementById("otpPhone");
+    document.getElementById(
+        "otpPhone"
+    );
 
 const resendOtp =
-    document.getElementById("resendOtp");
+    document.getElementById(
+        "resendOtp"
+    );
 
 const userState =
-    document.getElementById("userState");
+    document.getElementById(
+        "userState"
+    );
 
 const userName =
-    document.getElementById("userName");
+    document.getElementById(
+        "userName"
+    );
 
 const logoutBtn =
-    document.getElementById("logoutBtn");
+    document.getElementById(
+        "logoutBtn"
+    );
+
 
 let pendingPhone = "";
-
-
-/* =====================================================
-   API HELPER
-===================================================== */
-
-async function apiFetch(
-    endpoint,
-    options = {}
-){
-
-    return fetch(
-        `${API_BASE_URL}${endpoint}`,
-        {
-            ...options,
-
-            credentials:"include",
-
-            headers:{
-                ...(options.body
-                    ? {
-                        "Content-Type":
-                            "application/json"
-                    }
-                    : {}),
-                ...(options.headers || {})
-            }
-        }
-    );
-}
 
 
 /* =====================================================
@@ -2415,7 +2654,9 @@ authOverlay.addEventListener(
     "click",
     e => {
 
-        if(e.target === authOverlay){
+        if(
+            e.target === authOverlay
+        ){
 
             closeAuthModal();
 
@@ -2613,6 +2854,11 @@ signupForm.addEventListener(
                     {
                         method:"POST",
 
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
                         body:JSON.stringify({
                             name,
                             phone,
@@ -2642,18 +2888,17 @@ signupForm.addEventListener(
 
             setTimeout(
                 () => {
-
-                    showOtpScreen(
-                        phone
-                    );
-
+                    showOtpScreen(phone);
                 },
                 500
             );
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "SIGNUP ERROR:",
+                error
+            );
 
             showMessage(
                 "ارتباط با سرور برقرار نشد."
@@ -2698,6 +2943,11 @@ otpForm.addEventListener(
                     {
                         method:"POST",
 
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
                         body:JSON.stringify({
                             phone:pendingPhone,
                             code
@@ -2736,7 +2986,10 @@ otpForm.addEventListener(
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "VERIFY ERROR:",
+                error
+            );
 
             showMessage(
                 "ارتباط با سرور برقرار نشد."
@@ -2767,6 +3020,11 @@ resendOtp.addEventListener(
                     {
                         method:"POST",
 
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
                         body:JSON.stringify({
                             phone:pendingPhone
                         })
@@ -2793,7 +3051,10 @@ resendOtp.addEventListener(
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "RESEND OTP ERROR:",
+                error
+            );
 
             showMessage(
                 "ارتباط با سرور برقرار نشد."
@@ -2852,6 +3113,11 @@ loginForm.addEventListener(
                     {
                         method:"POST",
 
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
                         body:JSON.stringify({
                             phone,
                             password
@@ -2863,8 +3129,9 @@ loginForm.addEventListener(
                 await response.json();
 
             /*
-                Backend uses:
-                needsVerification
+                توجه:
+                Backend از needsVerification استفاده می‌کند،
+                نه requiresVerification.
             */
 
             if(
@@ -2873,8 +3140,7 @@ loginForm.addEventListener(
             ){
 
                 showMessage(
-                    data.message ||
-                    "شماره موبایل شما تأیید نشده است."
+                    data.message
                 );
 
                 showOtpScreen(phone);
@@ -2908,7 +3174,10 @@ loginForm.addEventListener(
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "LOGIN ERROR:",
+                error
+            );
 
             showMessage(
                 "ارتباط با سرور برقرار نشد."
@@ -2937,7 +3206,7 @@ function updateUserState(user){
     );
 
     userName.textContent =
-        user.name || "کاربر";
+        user.name;
 
 }
 
@@ -2975,7 +3244,7 @@ async function checkCurrentUser(){
     }catch(error){
 
         console.log(
-            "User check failed.",
+            "User check failed:",
             error
         );
     }
@@ -3003,8 +3272,10 @@ logoutBtn.addEventListener(
 
         }catch(error){
 
-            console.error(error);
-
+            console.error(
+                "LOGOUT ERROR:",
+                error
+            );
         }
 
         userState.classList.remove(
@@ -3016,6 +3287,7 @@ logoutBtn.addEventListener(
 
         switchTab("login");
 
+        openAuthModal();
     }
 );
 
@@ -3057,7 +3329,10 @@ projectButton.addEventListener(
 
         }catch(error){
 
-            console.error(error);
+            console.error(
+                "PROJECT BUTTON ERROR:",
+                error
+            );
 
             switchTab("login");
 
@@ -3078,8 +3353,35 @@ document.getElementById(
 ).textContent =
     new Date().getFullYear();
 
+
+/* =====================================================
+   BACKEND CONNECTION TEST
+===================================================== */
+
+console.log(
+    "MTA Studio API:",
+    API_BASE_URL
+);
+
+apiFetch("/api/me")
+    .then(response => {
+
+        console.log(
+            "Backend response:",
+            response.status
+        );
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Backend connection failed:",
+            error
+        );
+
+    });
+
 </script>
 
 </body>
 </html>
-```
