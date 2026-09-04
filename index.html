@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 
@@ -9,10 +10,6 @@
 <title>MTA Studio | استودیو خلاقیت دیجیتال</title>
 
 <style>
-
-/* =====================================================
-   ROOT
-===================================================== */
 
 :root{
     --bg:#09090b;
@@ -62,19 +59,11 @@ body{
     isolation:isolate;
 }
 
-
-/* =====================================================
-   BACKGROUND
-===================================================== */
-
 .noise{
     position:fixed;
     inset:0;
-
     pointer-events:none;
-
     z-index:-1;
-
     opacity:.18;
 
     background:
@@ -83,13 +72,11 @@ body{
             rgba(255,122,0,.14),
             transparent 28%
         ),
-
         radial-gradient(
             circle at 85% 25%,
             rgba(255,122,0,.10),
             transparent 25%
         ),
-
         radial-gradient(
             circle at 50% 85%,
             rgba(255,145,43,.08),
@@ -100,9 +87,7 @@ body{
 .grid{
     position:fixed;
     inset:0;
-
     pointer-events:none;
-
     z-index:-2;
 
     background:
@@ -110,7 +95,6 @@ body{
             rgba(255,255,255,.025) 1px,
             transparent 1px
         ),
-
         linear-gradient(
             90deg,
             rgba(255,255,255,.025) 1px,
@@ -129,15 +113,10 @@ body{
 
 .orb{
     position:fixed;
-
     border-radius:50%;
-
     filter:blur(80px);
-
     pointer-events:none;
-
     z-index:-1;
-
     opacity:.42;
 
     animation:
@@ -151,9 +130,7 @@ body{
 .orb.one{
     width:330px;
     height:330px;
-
     background:#ff6a00;
-
     top:-120px;
     right:-90px;
 }
@@ -161,12 +138,9 @@ body{
 .orb.two{
     width:270px;
     height:270px;
-
     background:#7b2f00;
-
     bottom:5%;
     left:-90px;
-
     animation-delay:-4s;
 }
 
@@ -185,35 +159,22 @@ body{
     }
 }
 
-
-/* =====================================================
-   HEADER
-===================================================== */
-
 header{
     position:fixed;
-
     top:0;
     left:0;
-
     width:100%;
-
     z-index:100;
-
     padding:18px 6vw;
 }
 
 .nav{
     max-width:1280px;
-
     margin:auto;
 
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
-
     gap:20px;
 
     padding:14px 18px;
@@ -236,15 +197,10 @@ header{
 
 .brand{
     display:flex;
-
     align-items:center;
-
     gap:10px;
-
     font-weight:900;
-
     letter-spacing:.5px;
-
     direction:ltr;
 }
 
@@ -253,7 +209,6 @@ header{
     height:40px;
 
     display:grid;
-
     place-items:center;
 
     border-radius:14px;
@@ -301,9 +256,7 @@ header{
 
 .nav-links{
     display:flex;
-
     gap:7px;
-
     align-items:center;
 }
 
@@ -349,18 +302,11 @@ header{
         rgba(255,122,0,.07);
 }
 
-
-/* =====================================================
-   HERO
-===================================================== */
-
 .hero{
     min-height:100svh;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     text-align:center;
@@ -375,15 +321,12 @@ header{
 
 .hero-inner{
     width:min(1100px,100%);
-
     margin:auto;
-
     position:relative;
 }
 
 .pill{
     width:max-content;
-
     max-width:100%;
 
     margin:
@@ -489,7 +432,6 @@ header{
 
 .typed{
     display:inline-block;
-
     white-space:nowrap;
 }
 
@@ -497,7 +439,6 @@ header{
     display:inline-block;
 
     width:5px;
-
     height:.85em;
 
     background:
@@ -521,7 +462,6 @@ header{
 }
 
 @keyframes blink{
-
     50%{
         opacity:0;
     }
@@ -557,7 +497,6 @@ header{
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     flex-wrap:wrap;
@@ -645,11 +584,6 @@ header{
         translateY(-4px);
 }
 
-
-/* =====================================================
-   SECTIONS
-===================================================== */
-
 section{
     padding:
         110px
@@ -660,25 +594,19 @@ section{
 
 .container{
     max-width:1240px;
-
     margin:auto;
 }
 
 .section-title{
     text-align:center;
-
     margin-bottom:54px;
 }
 
 .eyebrow{
     color:var(--orange-2);
-
     font-weight:800;
-
     font-size:14px;
-
     margin-bottom:10px;
-
     letter-spacing:.4px;
 }
 
@@ -691,30 +619,23 @@ section{
         );
 
     line-height:1.25;
-
     margin-bottom:15px;
 }
 
 .section-title p{
     color:var(--muted);
-
     max-width:680px;
-
     margin:auto;
-
     line-height:1.9;
-
     font-size:16px;
 }
 
 .services-grid{
     display:grid;
-
     grid-template-columns:
         repeat(3,1fr);
 
     gap:24px;
-
     perspective:1000px;
 }
 
@@ -778,9 +699,7 @@ section{
         rgba(255,255,255,.11);
 
     font-size:52px;
-
     font-weight:900;
-
     direction:ltr;
 }
 
@@ -789,7 +708,6 @@ section{
     height:66px;
 
     display:grid;
-
     place-items:center;
 
     border-radius:20px;
@@ -824,15 +742,12 @@ section{
 
 .service-card h3{
     font-size:25px;
-
     margin-bottom:15px;
 }
 
 .service-card p{
     color:#aaaab3;
-
     font-size:15px;
-
     line-height:2;
 }
 
@@ -848,7 +763,8 @@ section{
     font-size:12px;
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,122,0,.18);
 
     border-radius:999px;
@@ -859,18 +775,13 @@ section{
         rgba(255,122,0,.06);
 }
 
-
-/* =====================================================
-   CTA
-===================================================== */
-
 .cta-wrap{
     position:relative;
-
     overflow:hidden;
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,255,255,.09);
 
     border-radius:38px;
@@ -966,6 +877,9 @@ section{
     transition:.3s ease;
 
     cursor:pointer;
+
+    border:0;
+    font-family:inherit;
 }
 
 .cta-main:hover{
@@ -977,11 +891,6 @@ section{
         0 20px 62px
         rgba(255,122,0,.48);
 }
-
-
-/* =====================================================
-   FOOTER
-===================================================== */
 
 footer{
     padding:
@@ -1006,7 +915,8 @@ footer{
     padding-top:28px;
 
     border-top:
-        1px solid
+        1px
+        solid
         var(--line);
 
     color:#85858f;
@@ -1016,16 +926,9 @@ footer{
 
 .footer-brand{
     color:#e7e7eb;
-
     font-weight:800;
-
     direction:ltr;
 }
-
-
-/* =====================================================
-   BACK TO TOP
-===================================================== */
 
 .back-to-top{
     position:fixed;
@@ -1037,7 +940,8 @@ footer{
     height:54px;
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,122,0,.32);
 
     border-radius:17px;
@@ -1048,7 +952,6 @@ footer{
     color:#fff;
 
     display:grid;
-
     place-items:center;
 
     font-size:25px;
@@ -1058,7 +961,6 @@ footer{
     z-index:90;
 
     opacity:0;
-
     visibility:hidden;
 
     transform:
@@ -1072,7 +974,6 @@ footer{
 
 .back-to-top.show{
     opacity:1;
-
     visibility:visible;
 
     transform:
@@ -1080,22 +981,14 @@ footer{
         scale(1);
 }
 
-
-/* =====================================================
-   AUTH MODAL
-===================================================== */
-
 .auth-overlay{
     position:fixed;
-
     inset:0;
-
     z-index:1000;
 
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     padding:20px;
@@ -1106,7 +999,6 @@ footer{
     backdrop-filter:blur(16px);
 
     opacity:0;
-
     visibility:hidden;
 
     transition:.35s ease;
@@ -1114,7 +1006,6 @@ footer{
 
 .auth-overlay.active{
     opacity:1;
-
     visibility:visible;
 }
 
@@ -1130,7 +1021,8 @@ footer{
     padding:34px;
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,122,0,.22);
 
     border-radius:30px;
@@ -1172,7 +1064,8 @@ footer{
     height:38px;
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,255,255,.08);
 
     border-radius:12px;
@@ -1218,9 +1111,7 @@ footer{
 
 .auth-title{
     text-align:center;
-
     font-size:28px;
-
     margin-bottom:8px;
 }
 
@@ -1306,7 +1197,8 @@ footer{
         15px;
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,255,255,.09);
 
     border-radius:14px;
@@ -1398,7 +1290,8 @@ footer{
         rgba(255,60,40,.08);
 
     border:
-        1px solid
+        1px
+        solid
         rgba(255,60,40,.15);
 }
 
@@ -1409,7 +1302,8 @@ footer{
         rgba(40,255,100,.07);
 
     border:
-        1px solid
+        1px
+        solid
         rgba(40,255,100,.13);
 }
 
@@ -1426,8 +1320,7 @@ footer{
 }
 
 .otp-phone{
-    color:
-        var(--orange-2);
+    color:var(--orange-2);
 
     direction:ltr;
 
@@ -1466,11 +1359,6 @@ footer{
 
     font-family:inherit;
 }
-
-
-/* =====================================================
-   LOGGED USER
-===================================================== */
 
 .user-state{
     display:none;
@@ -1516,11 +1404,6 @@ footer{
 
     font-family:inherit;
 }
-
-
-/* =====================================================
-   REVEAL
-===================================================== */
 
 .reveal{
     opacity:0;
@@ -1569,11 +1452,6 @@ footer{
     }
 }
 
-
-/* =====================================================
-   MOUSE GLOW
-===================================================== */
-
 .mouse-glow{
     position:fixed;
 
@@ -1596,11 +1474,6 @@ footer{
     transform:
         translate(-50%,-50%);
 }
-
-
-/* =====================================================
-   RESPONSIVE
-===================================================== */
 
 @media(max-width:900px){
 
@@ -1651,7 +1524,6 @@ footer{
 
     .footer-inner{
         flex-direction:column;
-
         text-align:center;
     }
 
@@ -1670,7 +1542,6 @@ footer{
 </style>
 </head>
 
-
 <body>
 
 <div class="grid"></div>
@@ -1680,11 +1551,6 @@ footer{
 <div class="orb two"></div>
 
 <div class="mouse-glow" id="mouseGlow"></div>
-
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
 
 <header>
 
@@ -1701,7 +1567,6 @@ footer{
         </div>
 
     </div>
-
 
     <div class="nav-links">
 
@@ -1726,7 +1591,6 @@ footer{
 
     </div>
 
-
     <div
         class="user-state"
         id="userState"
@@ -1750,15 +1614,7 @@ footer{
 
 </header>
 
-
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
 <main>
-
-
-<!-- HERO -->
 
 <section
     class="hero"
@@ -1770,7 +1626,6 @@ footer{
     <div class="pill">
         استودیو خلاقیت دیجیتال • MTA Studio
     </div>
-
 
     <h1>
 
@@ -1795,14 +1650,12 @@ footer{
 
     </h1>
 
-
     <p>
         جایی که ایده‌ها فقط در حد فکر باقی نمی‌مانند.
         ما با ترکیب خلاقیت، طراحی و تکنولوژی،
         پروژه‌های دیجیتال شما را به تجربه‌ای
         حرفه‌ای، چشم‌گیر و ماندگار تبدیل می‌کنیم.
     </p>
-
 
     <div class="hero-actions">
 
@@ -1826,10 +1679,6 @@ footer{
 
 </section>
 
-
-
-<!-- SERVICES -->
-
 <section id="services">
 
 <div class="container">
@@ -1852,9 +1701,7 @@ footer{
 
     </div>
 
-
     <div class="services-grid">
-
 
         <article class="service-card reveal">
 
@@ -1882,7 +1729,6 @@ footer{
 
         </article>
 
-
         <article class="service-card reveal">
 
             <span class="service-number">
@@ -1908,7 +1754,6 @@ footer{
             </span>
 
         </article>
-
 
         <article class="service-card reveal">
 
@@ -1939,16 +1784,11 @@ footer{
 
         </article>
 
-
     </div>
 
 </div>
 
 </section>
-
-
-
-<!-- CTA -->
 
 <section id="start">
 
@@ -1993,11 +1833,6 @@ footer{
 
 </main>
 
-
-<!-- =====================================================
-     BACK TO TOP
-===================================================== -->
-
 <button
     class="back-to-top"
     id="backToTop"
@@ -2005,11 +1840,6 @@ footer{
 >
     ↑
 </button>
-
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
 
 <footer>
 
@@ -2028,19 +1858,12 @@ footer{
 
 </footer>
 
-
-
-<!-- =====================================================
-     AUTH MODAL
-===================================================== -->
-
 <div
     class="auth-overlay"
     id="authOverlay"
 >
 
 <div class="auth-box">
-
 
 <button
     class="auth-close"
@@ -2049,11 +1872,9 @@ footer{
     ×
 </button>
 
-
 <div class="auth-logo">
     MTA
 </div>
-
 
 <h2
     class="auth-title"
@@ -2062,16 +1883,12 @@ footer{
     ورود به MTA Studio
 </h2>
 
-
 <p
     class="auth-subtitle"
     id="authSubtitle"
 >
     برای مدیریت پروژه‌ها وارد حساب خود شوید.
 </p>
-
-
-<!-- TABS -->
 
 <div
     class="auth-tabs"
@@ -2094,17 +1911,10 @@ footer{
 
 </div>
 
-
-<!-- MESSAGE -->
-
 <div
     class="auth-message"
     id="authMessage"
 ></div>
-
-
-
-<!-- LOGIN -->
 
 <form
     class="auth-form active"
@@ -2127,7 +1937,6 @@ footer{
 
 </div>
 
-
 <div class="input-group">
 
 <label>
@@ -2143,7 +1952,6 @@ footer{
 
 </div>
 
-
 <button
     class="auth-submit"
     type="submit"
@@ -2152,10 +1960,6 @@ footer{
 </button>
 
 </form>
-
-
-
-<!-- SIGNUP -->
 
 <form
     class="auth-form"
@@ -2177,7 +1981,6 @@ footer{
 
 </div>
 
-
 <div class="input-group">
 
 <label>
@@ -2194,7 +1997,6 @@ footer{
 
 </div>
 
-
 <div class="input-group">
 
 <label>
@@ -2210,7 +2012,6 @@ footer{
 
 </div>
 
-
 <button
     class="auth-submit"
     type="submit"
@@ -2219,10 +2020,6 @@ footer{
 </button>
 
 </form>
-
-
-
-<!-- OTP -->
 
 <form
     class="auth-form"
@@ -2246,7 +2043,6 @@ footer{
 
 </div>
 
-
 <div class="input-group">
 
 <input
@@ -2261,14 +2057,12 @@ footer{
 
 </div>
 
-
 <button
     class="auth-submit"
     type="submit"
 >
     تأیید شماره
 </button>
-
 
 <button
     class="resend"
@@ -2280,14 +2074,19 @@ footer{
 
 </form>
 
-
 </div>
 
 </div>
-
-
 
 <script>
+
+/* =====================================================
+   BACKEND
+===================================================== */
+
+const API_BASE_URL =
+    "https://mta-studio-backend.onrender.com";
+
 
 /* =====================================================
    TYPING
@@ -2385,9 +2184,7 @@ setTimeout(
 ===================================================== */
 
 const revealItems =
-    document.querySelectorAll(
-        ".reveal"
-    );
+    document.querySelectorAll(".reveal");
 
 const observer =
     new IntersectionObserver(
@@ -2437,9 +2234,7 @@ revealItems.forEach(
 ===================================================== */
 
 const mouseGlow =
-    document.getElementById(
-        "mouseGlow"
-    );
+    document.getElementById("mouseGlow");
 
 window.addEventListener(
     "pointermove",
@@ -2460,17 +2255,13 @@ window.addEventListener(
 ===================================================== */
 
 const backToTop =
-    document.getElementById(
-        "backToTop"
-    );
+    document.getElementById("backToTop");
 
 window.addEventListener(
     "scroll",
     () => {
 
-        if(
-            window.scrollY > 650
-        ){
+        if(window.scrollY > 650){
 
             backToTop
                 .classList
@@ -2507,92 +2298,87 @@ backToTop.addEventListener(
 ===================================================== */
 
 const authOverlay =
-    document.getElementById(
-        "authOverlay"
-    );
+    document.getElementById("authOverlay");
 
 const authClose =
-    document.getElementById(
-        "authClose"
-    );
+    document.getElementById("authClose");
 
 const openAuth =
-    document.getElementById(
-        "openAuth"
-    );
+    document.getElementById("openAuth");
 
 const projectButton =
-    document.getElementById(
-        "projectButton"
-    );
+    document.getElementById("projectButton");
 
 const authMessage =
-    document.getElementById(
-        "authMessage"
-    );
+    document.getElementById("authMessage");
 
 const authTabs =
-    document.querySelectorAll(
-        ".auth-tab"
-    );
+    document.querySelectorAll(".auth-tab");
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 const signupForm =
-    document.getElementById(
-        "signupForm"
-    );
+    document.getElementById("signupForm");
 
 const otpForm =
-    document.getElementById(
-        "otpForm"
-    );
+    document.getElementById("otpForm");
 
 const authTabsBox =
-    document.getElementById(
-        "authTabs"
-    );
+    document.getElementById("authTabs");
 
 const authTitle =
-    document.getElementById(
-        "authTitle"
-    );
+    document.getElementById("authTitle");
 
 const authSubtitle =
-    document.getElementById(
-        "authSubtitle"
-    );
+    document.getElementById("authSubtitle");
 
 const otpPhone =
-    document.getElementById(
-        "otpPhone"
-    );
+    document.getElementById("otpPhone");
 
 const resendOtp =
-    document.getElementById(
-        "resendOtp"
-    );
+    document.getElementById("resendOtp");
 
 const userState =
-    document.getElementById(
-        "userState"
-    );
+    document.getElementById("userState");
 
 const userName =
-    document.getElementById(
-        "userName"
-    );
+    document.getElementById("userName");
 
 const logoutBtn =
-    document.getElementById(
-        "logoutBtn"
-    );
-
+    document.getElementById("logoutBtn");
 
 let pendingPhone = "";
+
+
+/* =====================================================
+   API HELPER
+===================================================== */
+
+async function apiFetch(
+    endpoint,
+    options = {}
+){
+
+    return fetch(
+        `${API_BASE_URL}${endpoint}`,
+        {
+            ...options,
+
+            credentials:"include",
+
+            headers:{
+                ...(options.body
+                    ? {
+                        "Content-Type":
+                            "application/json"
+                    }
+                    : {}),
+                ...(options.headers || {})
+            }
+        }
+    );
+}
 
 
 /* =====================================================
@@ -2629,9 +2415,7 @@ authOverlay.addEventListener(
     "click",
     e => {
 
-        if(
-            e.target === authOverlay
-        ){
+        if(e.target === authOverlay){
 
             closeAuthModal();
 
@@ -2824,15 +2608,10 @@ signupForm.addEventListener(
         try{
 
             const response =
-                await fetch(
+                await apiFetch(
                     "/api/signup",
                     {
                         method:"POST",
-
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
 
                         body:JSON.stringify({
                             name,
@@ -2863,7 +2642,11 @@ signupForm.addEventListener(
 
             setTimeout(
                 () => {
-                    showOtpScreen(phone);
+
+                    showOtpScreen(
+                        phone
+                    );
+
                 },
                 500
             );
@@ -2910,15 +2693,10 @@ otpForm.addEventListener(
         try{
 
             const response =
-                await fetch(
+                await apiFetch(
                     "/api/verify-phone",
                     {
                         method:"POST",
-
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
 
                         body:JSON.stringify({
                             phone:pendingPhone,
@@ -2984,15 +2762,10 @@ resendOtp.addEventListener(
         try{
 
             const response =
-                await fetch(
+                await apiFetch(
                     "/api/resend-otp",
                     {
                         method:"POST",
-
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
 
                         body:JSON.stringify({
                             phone:pendingPhone
@@ -3019,6 +2792,8 @@ resendOtp.addEventListener(
             );
 
         }catch(error){
+
+            console.error(error);
 
             showMessage(
                 "ارتباط با سرور برقرار نشد."
@@ -3072,15 +2847,10 @@ loginForm.addEventListener(
         try{
 
             const response =
-                await fetch(
+                await apiFetch(
                     "/api/login",
                     {
                         method:"POST",
-
-                        headers:{
-                            "Content-Type":
-                                "application/json"
-                        },
 
                         body:JSON.stringify({
                             phone,
@@ -3092,13 +2862,19 @@ loginForm.addEventListener(
             const data =
                 await response.json();
 
+            /*
+                Backend uses:
+                needsVerification
+            */
+
             if(
                 response.status === 403 &&
-                data.requiresVerification
+                data.needsVerification
             ){
 
                 showMessage(
-                    data.message
+                    data.message ||
+                    "شماره موبایل شما تأیید نشده است."
                 );
 
                 showOtpScreen(phone);
@@ -3161,7 +2937,7 @@ function updateUserState(user){
     );
 
     userName.textContent =
-        user.name;
+        user.name || "کاربر";
 
 }
 
@@ -3175,7 +2951,7 @@ async function checkCurrentUser(){
     try{
 
         const response =
-            await fetch(
+            await apiFetch(
                 "/api/me"
             );
 
@@ -3199,7 +2975,8 @@ async function checkCurrentUser(){
     }catch(error){
 
         console.log(
-            "User check failed."
+            "User check failed.",
+            error
         );
     }
 }
@@ -3217,14 +2994,18 @@ logoutBtn.addEventListener(
 
         try{
 
-            await fetch(
+            await apiFetch(
                 "/api/logout",
                 {
                     method:"POST"
                 }
             );
 
-        }catch(error){}
+        }catch(error){
+
+            console.error(error);
+
+        }
 
         userState.classList.remove(
             "show"
@@ -3235,7 +3016,6 @@ logoutBtn.addEventListener(
 
         switchTab("login");
 
-        openAuthModal();
     }
 );
 
@@ -3251,18 +3031,11 @@ projectButton.addEventListener(
         try{
 
             const response =
-                await fetch(
+                await apiFetch(
                     "/api/me"
                 );
 
             if(response.ok){
-
-                /*
-                    کاربر وارد شده.
-                    فعلاً چون صفحه ثبت پروژه
-                    را هنوز نساخته‌ایم،
-                    پیام نمایش می‌دهیم.
-                */
 
                 showMessage(
                     "حساب شما آماده است. در مرحله بعد فرم ثبت پروژه را فعال می‌کنیم.",
@@ -3283,6 +3056,8 @@ projectButton.addEventListener(
             openAuthModal();
 
         }catch(error){
+
+            console.error(error);
 
             switchTab("login");
 
@@ -3307,3 +3082,4 @@ document.getElementById(
 
 </body>
 </html>
+```
