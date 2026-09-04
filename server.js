@@ -1,3 +1,4 @@
+```js
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -5,11 +6,11 @@ const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const Database = require("better-sqlite3");
 
-const PORT = process.env.PORT || 3000;
+// ======================================================
+// PORT
+// ======================================================
 
-server.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
 
 // ======================================================
 // DATABASE
@@ -134,28 +135,23 @@ function sendJSON(res, statusCode, data, extraHeaders = {}) {
 
 function readBody(req) {
     return new Promise((resolve, reject) => {
-
         let body = "";
 
         req.on("data", chunk => {
-
             body += chunk;
 
             if (body.length > 100000) {
                 req.destroy();
                 reject(new Error("Request too large"));
             }
-
         });
 
         req.on("end", () => {
-
             try {
                 resolve(body ? JSON.parse(body) : {});
             } catch {
                 reject(new Error("Invalid JSON"));
             }
-
         });
 
         req.on("error", reject);
@@ -167,7 +163,9 @@ function validPhone(phone) {
 }
 
 function generateOTP() {
-    return String(Math.floor(100000 + Math.random() * 900000));
+    return String(
+        Math.floor(100000 + Math.random() * 900000)
+    );
 }
 
 function hashOTP(code) {
@@ -182,7 +180,6 @@ function hashOTP(code) {
 // ======================================================
 
 function createOTP(phone) {
-
     const code = generateOTP();
 
     const codeHash = hashOTP(code);
@@ -214,7 +211,6 @@ function createOTP(phone) {
 // ======================================================
 
 async function sendSMS(phone, code) {
-
     /*
         فعلاً SMS واقعی ارسال نمی‌شود.
 
@@ -244,9 +240,7 @@ async function handleAPI(req, res) {
     // ==================================================
 
     if (req.method === "POST" && req.url === "/api/signup") {
-
         try {
-
             const body = await readBody(req);
 
             const name = String(body.name || "").trim();
@@ -283,7 +277,6 @@ async function handleAPI(req, res) {
             if (existingUser) {
 
                 if (!existingUser.phone_verified) {
-
                     const code = createOTP(phone);
 
                     await sendSMS(phone, code);
@@ -293,7 +286,6 @@ async function handleAPI(req, res) {
                         needsVerification: true,
                         message: "این حساب هنوز تأیید نشده است. کد جدید ارسال شد."
                     });
-
                 }
 
                 return sendJSON(res, 409, {
@@ -325,7 +317,6 @@ async function handleAPI(req, res) {
             });
 
         } catch (error) {
-
             console.error(error);
 
             return sendJSON(res, 500, {
@@ -343,9 +334,7 @@ async function handleAPI(req, res) {
         req.method === "POST" &&
         req.url === "/api/verify-phone"
     ) {
-
         try {
-
             const body = await readBody(req);
 
             const phone = String(body.phone || "").trim();
@@ -381,7 +370,6 @@ async function handleAPI(req, res) {
             }
 
             if (Date.now() > otp.expires_at) {
-
                 db.prepare(`
                     DELETE FROM otp_codes
                     WHERE id = ?
@@ -394,7 +382,6 @@ async function handleAPI(req, res) {
             }
 
             if (otp.attempts >= 5) {
-
                 db.prepare(`
                     DELETE FROM otp_codes
                     WHERE id = ?
@@ -409,7 +396,6 @@ async function handleAPI(req, res) {
             const inputHash = hashOTP(code);
 
             if (inputHash !== otp.code_hash) {
-
                 db.prepare(`
                     UPDATE otp_codes
                     SET attempts = attempts + 1
@@ -474,7 +460,6 @@ async function handleAPI(req, res) {
             );
 
         } catch (error) {
-
             console.error(error);
 
             return sendJSON(res, 500, {
@@ -492,9 +477,7 @@ async function handleAPI(req, res) {
         req.method === "POST" &&
         req.url === "/api/resend-otp"
     ) {
-
         try {
-
             const body = await readBody(req);
 
             const phone = String(body.phone || "").trim();
@@ -529,7 +512,6 @@ async function handleAPI(req, res) {
             });
 
         } catch (error) {
-
             console.error(error);
 
             return sendJSON(res, 500, {
@@ -544,9 +526,7 @@ async function handleAPI(req, res) {
     // ==================================================
 
     if (req.method === "POST" && req.url === "/api/login") {
-
         try {
-
             const body = await readBody(req);
 
             const phone = String(body.phone || "").trim();
@@ -586,7 +566,6 @@ async function handleAPI(req, res) {
 
             // شماره باید تأیید شده باشد
             if (!user.phone_verified) {
-
                 const code = createOTP(phone);
 
                 await sendSMS(phone, code);
@@ -620,7 +599,6 @@ async function handleAPI(req, res) {
             );
 
         } catch (error) {
-
             console.error(error);
 
             return sendJSON(res, 500, {
@@ -685,9 +663,7 @@ async function handleAPI(req, res) {
         req.method === "POST" &&
         req.url === "/api/projects"
     ) {
-
         try {
-
             const user = getCurrentUser(req);
 
             // کاربر حتماً باید وارد شده باشد
@@ -796,7 +772,6 @@ async function handleAPI(req, res) {
             });
 
         } catch (error) {
-
             console.error(error);
 
             return sendJSON(res, 500, {
@@ -860,12 +835,46 @@ const server = http.createServer(async (req, res) => {
 
     try {
 
+        // ==================================================
+        // CORS
+        // ==================================================
+
+        res.setHeader(
+            "Access-Control-Allow-Origin",
+            "*"
+        );
+
+        res.setHeader(
+            "Access-Control-Allow-Methods",
+            "GET, POST, OPTIONS"
+        );
+
+        res.setHeader(
+            "Access-Control-Allow-Headers",
+            "Content-Type"
+        );
+
+        // ==================================================
+        // PREFLIGHT
+        // ==================================================
+
+        if (req.method === "OPTIONS") {
+            res.writeHead(204);
+            return res.end();
+        }
+
+        // ==================================================
         // API
+        // ==================================================
+
         if (req.url.startsWith("/api/")) {
             return await handleAPI(req, res);
         }
 
+        // ==================================================
         // HOME
+        // ==================================================
+
         if (
             req.url === "/" ||
             req.url === "/index.html"
@@ -899,6 +908,55 @@ const server = http.createServer(async (req, res) => {
             `);
         }
 
+        // ==================================================
+        // STATIC FILES
+        // ==================================================
+
+        const requestedPath = decodeURIComponent(
+            req.url.split("?")[0]
+        );
+
+        const filePath = path.join(
+            __dirname,
+            requestedPath
+        );
+
+        if (
+            filePath.startsWith(__dirname) &&
+            fs.existsSync(filePath) &&
+            fs.statSync(filePath).isFile()
+        ) {
+
+            const ext = path.extname(filePath).toLowerCase();
+
+            const contentTypes = {
+                ".html": "text/html; charset=utf-8",
+                ".css": "text/css; charset=utf-8",
+                ".js": "application/javascript; charset=utf-8",
+                ".json": "application/json; charset=utf-8",
+                ".png": "image/png",
+                ".jpg": "image/jpeg",
+                ".jpeg": "image/jpeg",
+                ".svg": "image/svg+xml",
+                ".ico": "image/x-icon",
+                ".webp": "image/webp"
+            };
+
+            res.writeHead(200, {
+                "Content-Type":
+                    contentTypes[ext] ||
+                    "application/octet-stream"
+            });
+
+            return fs
+                .createReadStream(filePath)
+                .pipe(res);
+        }
+
+        // ==================================================
+        // NOT FOUND
+        // ==================================================
+
         res.writeHead(404);
         res.end("Not Found");
 
@@ -915,17 +973,19 @@ const server = http.createServer(async (req, res) => {
 // START SERVER
 // ======================================================
 
-server.listen(PORT, () => {
+server.listen(PORT, "0.0.0.0", () => {
 
     console.log("");
     console.log("================================");
     console.log("       MTA STUDIO BACKEND");
     console.log("================================");
-    console.log(`Server: http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
     console.log("Database: connected");
     console.log("Authentication: ready");
     console.log("OTP system: ready");
     console.log("Projects API: ready");
     console.log("================================");
     console.log("");
+
 });
+```
