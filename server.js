@@ -28,56 +28,56 @@ const db = new Database(
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 
-db.exec(`
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        phone TEXT NOT NULL UNIQUE,
-        password_hash TEXT NOT NULL,
-        role TEXT NOT NULL DEFAULT 'customer',
-        phone_verified INTEGER NOT NULL DEFAULT 0,
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
+db.exec(
+    "CREATE TABLE IF NOT EXISTS users (" +
+    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+    "name TEXT NOT NULL," +
+    "phone TEXT NOT NULL UNIQUE," +
+    "password_hash TEXT NOT NULL," +
+    "role TEXT NOT NULL DEFAULT 'customer'," +
+    "phone_verified INTEGER NOT NULL DEFAULT 0," +
+    "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+    ")"
+);
 
-    CREATE TABLE IF NOT EXISTS projects (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        first_name TEXT NOT NULL,
-        last_name TEXT NOT NULL,
-        phone TEXT NOT NULL,
-        project_type TEXT NOT NULL,
-        budget TEXT NOT NULL,
-        description TEXT NOT NULL,
-        status TEXT NOT NULL DEFAULT 'pending',
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+db.exec(
+    "CREATE TABLE IF NOT EXISTS projects (" +
+    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+    "user_id INTEGER NOT NULL," +
+    "first_name TEXT NOT NULL," +
+    "last_name TEXT NOT NULL," +
+    "phone TEXT NOT NULL," +
+    "project_type TEXT NOT NULL," +
+    "budget TEXT NOT NULL," +
+    "description TEXT NOT NULL," +
+    "status TEXT NOT NULL DEFAULT 'pending'," +
+    "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+    "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+    ")"
+);
 
-        FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE CASCADE
-    );
+db.exec(
+    "CREATE TABLE IF NOT EXISTS otp_codes (" +
+    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+    "phone TEXT NOT NULL," +
+    "code_hash TEXT NOT NULL," +
+    "expires_at INTEGER NOT NULL," +
+    "attempts INTEGER NOT NULL DEFAULT 0," +
+    "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP" +
+    ")"
+);
 
-    CREATE TABLE IF NOT EXISTS otp_codes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        phone TEXT NOT NULL,
-        code_hash TEXT NOT NULL,
-        expires_at INTEGER NOT NULL,
-        attempts INTEGER NOT NULL DEFAULT 0,
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-    );
-
-    CREATE TABLE IF NOT EXISTS notifications (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        title TEXT NOT NULL,
-        message TEXT NOT NULL,
-        is_read INTEGER NOT NULL DEFAULT 0,
-        created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-        FOREIGN KEY (user_id)
-            REFERENCES users(id)
-            ON DELETE CASCADE
-    );
-`);
+db.exec(
+    "CREATE TABLE IF NOT EXISTS notifications (" +
+    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+    "user_id INTEGER NOT NULL," +
+    "title TEXT NOT NULL," +
+    "message TEXT NOT NULL," +
+    "is_read INTEGER NOT NULL DEFAULT 0," +
+    "created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+    "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE" +
+    ")"
+);
 
 // ======================================================
 // SESSIONS
