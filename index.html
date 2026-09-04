@@ -1,0 +1,3309 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#09090b">
+
+<title>MTA Studio | استودیو خلاقیت دیجیتال</title>
+
+<style>
+
+/* =====================================================
+   ROOT
+===================================================== */
+
+:root{
+    --bg:#09090b;
+    --bg-soft:#101014;
+    --card:#121216;
+    --text:#f7f7f8;
+    --muted:#aaaab4;
+
+    --orange:#ff7a00;
+    --orange-2:#ff9b38;
+    --orange-3:#ffb15c;
+
+    --line:rgba(255,255,255,.08);
+
+    --shadow:
+        0 0 40px rgba(255,122,0,.20);
+
+    --radius:28px;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+
+    background:var(--bg);
+    color:var(--text);
+
+    font-family:
+        Tahoma,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    overflow-x:hidden;
+}
+
+body{
+    position:relative;
+    isolation:isolate;
+}
+
+
+/* =====================================================
+   BACKGROUND
+===================================================== */
+
+.noise{
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:-1;
+
+    opacity:.18;
+
+    background:
+        radial-gradient(
+            circle at 15% 15%,
+            rgba(255,122,0,.14),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 85% 25%,
+            rgba(255,122,0,.10),
+            transparent 25%
+        ),
+
+        radial-gradient(
+            circle at 50% 85%,
+            rgba(255,145,43,.08),
+            transparent 35%
+        );
+}
+
+.grid{
+    position:fixed;
+    inset:0;
+
+    pointer-events:none;
+
+    z-index:-2;
+
+    background:
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
+
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        );
+
+    background-size:54px 54px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            rgba(0,0,0,.95),
+            transparent 90%
+        );
+}
+
+.orb{
+    position:fixed;
+
+    border-radius:50%;
+
+    filter:blur(80px);
+
+    pointer-events:none;
+
+    z-index:-1;
+
+    opacity:.42;
+
+    animation:
+        floatOrb
+        11s
+        ease-in-out
+        infinite
+        alternate;
+}
+
+.orb.one{
+    width:330px;
+    height:330px;
+
+    background:#ff6a00;
+
+    top:-120px;
+    right:-90px;
+}
+
+.orb.two{
+    width:270px;
+    height:270px;
+
+    background:#7b2f00;
+
+    bottom:5%;
+    left:-90px;
+
+    animation-delay:-4s;
+}
+
+@keyframes floatOrb{
+
+    from{
+        transform:
+            translate3d(0,0,0)
+            scale(1);
+    }
+
+    to{
+        transform:
+            translate3d(35px,55px,0)
+            scale(1.12);
+    }
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+header{
+    position:fixed;
+
+    top:0;
+    left:0;
+
+    width:100%;
+
+    z-index:100;
+
+    padding:18px 6vw;
+}
+
+.nav{
+    max-width:1280px;
+
+    margin:auto;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:20px;
+
+    padding:14px 18px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:22px;
+
+    background:
+        rgba(8,8,10,.58);
+
+    backdrop-filter:blur(18px);
+
+    box-shadow:
+        0 10px 50px
+        rgba(0,0,0,.25);
+}
+
+.brand{
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    font-weight:900;
+
+    letter-spacing:.5px;
+
+    direction:ltr;
+}
+
+.brand-mark{
+    width:40px;
+    height:40px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--orange),
+            #ff4d00
+        );
+
+    color:white;
+
+    box-shadow:
+        0 0 28px
+        rgba(255,122,0,.35);
+
+    font-size:14px;
+
+    animation:
+        brandPulse
+        2.2s
+        ease-in-out
+        infinite;
+}
+
+@keyframes brandPulse{
+
+    0%,100%{
+        box-shadow:
+            0 0 18px
+            rgba(255,122,0,.28);
+    }
+
+    50%{
+        box-shadow:
+            0 0 35px
+            rgba(255,122,0,.55);
+    }
+}
+
+.brand-text{
+    font-size:18px;
+}
+
+.nav-links{
+    display:flex;
+
+    gap:7px;
+
+    align-items:center;
+}
+
+.nav-links a,
+.login-button{
+    color:#d7d7dc;
+
+    text-decoration:none;
+
+    padding:10px 14px;
+
+    border-radius:12px;
+
+    font-size:14px;
+
+    transition:.25s ease;
+
+    background:transparent;
+
+    border:0;
+
+    cursor:pointer;
+
+    font-family:inherit;
+}
+
+.nav-links a:hover,
+.login-button:hover{
+    background:
+        rgba(255,122,0,.10);
+
+    color:#fff;
+}
+
+.login-button{
+    border:
+        1px solid
+        rgba(255,122,0,.28);
+
+    color:#ffc18b;
+
+    background:
+        rgba(255,122,0,.07);
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.hero{
+    min-height:100svh;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    position:relative;
+
+    padding:
+        150px
+        6vw
+        80px;
+}
+
+.hero-inner{
+    width:min(1100px,100%);
+
+    margin:auto;
+
+    position:relative;
+}
+
+.pill{
+    width:max-content;
+
+    max-width:100%;
+
+    margin:
+        0
+        auto
+        28px;
+
+    padding:
+        10px
+        18px;
+
+    border:
+        1px solid
+        rgba(255,140,35,.28);
+
+    background:
+        rgba(255,122,0,.065);
+
+    border-radius:999px;
+
+    color:#ffc998;
+
+    font-size:14px;
+
+    animation:
+        fadeUp
+        .9s
+        both;
+}
+
+.hero h1{
+    font-size:
+        clamp(
+            28px,
+            6.7vw,
+            92px
+        );
+
+    line-height:1.12;
+
+    letter-spacing:-2px;
+
+    font-weight:1000;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-wrap:nowrap;
+
+    white-space:nowrap;
+
+    width:100%;
+
+    animation:
+        fadeUp
+        1s
+        .12s
+        both;
+}
+
+.brand-big{
+    color:#fff;
+
+    text-shadow:
+        0 0 18px
+        rgba(255,255,255,.07);
+
+    white-space:nowrap;
+}
+
+.dash{
+    color:#6f7078;
+
+    display:inline-block;
+
+    margin:
+        0
+        10px;
+}
+
+.typing-wrap{
+    position:relative;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+
+    color:var(--orange-2);
+
+    filter:
+        drop-shadow(
+            0 0 18px
+            rgba(255,122,0,.28)
+        );
+
+    flex:0 0 auto;
+}
+
+.typed{
+    display:inline-block;
+
+    white-space:nowrap;
+}
+
+.cursor{
+    display:inline-block;
+
+    width:5px;
+
+    height:.85em;
+
+    background:
+        linear-gradient(
+            var(--orange-2),
+            var(--orange)
+        );
+
+    border-radius:5px;
+
+    margin-right:8px;
+
+    animation:
+        blink
+        .75s
+        infinite;
+
+    box-shadow:
+        0 0 18px
+        rgba(255,122,0,.7);
+}
+
+@keyframes blink{
+
+    50%{
+        opacity:0;
+    }
+}
+
+.hero p{
+    max-width:820px;
+
+    margin:
+        32px
+        auto
+        0;
+
+    color:#b7b7c0;
+
+    line-height:2;
+
+    font-size:
+        clamp(
+            16px,
+            2vw,
+            19px
+        );
+
+    animation:
+        fadeUp
+        1s
+        .25s
+        both;
+}
+
+.hero-actions{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    flex-wrap:wrap;
+
+    gap:14px;
+
+    margin-top:38px;
+
+    animation:
+        fadeUp
+        1s
+        .38s
+        both;
+}
+
+.btn{
+    min-width:175px;
+
+    text-decoration:none;
+
+    padding:
+        15px
+        24px;
+
+    border-radius:16px;
+
+    border:
+        1px
+        solid
+        transparent;
+
+    font-weight:800;
+
+    transition:.25s ease;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+.btn.primary{
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff8a1c,
+            #ff5c00
+        );
+
+    box-shadow:
+        0 15px 35px
+        rgba(255,100,0,.24);
+}
+
+.btn.primary:hover{
+    transform:
+        translateY(-4px)
+        scale(1.03);
+
+    box-shadow:
+        0 18px 50px
+        rgba(255,122,0,.38);
+}
+
+.btn.secondary{
+    color:#eee;
+
+    border-color:
+        rgba(255,255,255,.12);
+
+    background:
+        rgba(255,255,255,.035);
+
+    backdrop-filter:blur(10px);
+}
+
+.btn.secondary:hover{
+    border-color:
+        rgba(255,122,0,.35);
+
+    color:#ffd1a8;
+
+    transform:
+        translateY(-4px);
+}
+
+
+/* =====================================================
+   SECTIONS
+===================================================== */
+
+section{
+    padding:
+        110px
+        6vw;
+
+    position:relative;
+}
+
+.container{
+    max-width:1240px;
+
+    margin:auto;
+}
+
+.section-title{
+    text-align:center;
+
+    margin-bottom:54px;
+}
+
+.eyebrow{
+    color:var(--orange-2);
+
+    font-weight:800;
+
+    font-size:14px;
+
+    margin-bottom:10px;
+
+    letter-spacing:.4px;
+}
+
+.section-title h2{
+    font-size:
+        clamp(
+            32px,
+            5vw,
+            58px
+        );
+
+    line-height:1.25;
+
+    margin-bottom:15px;
+}
+
+.section-title p{
+    color:var(--muted);
+
+    max-width:680px;
+
+    margin:auto;
+
+    line-height:1.9;
+
+    font-size:16px;
+}
+
+.services-grid{
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:24px;
+
+    perspective:1000px;
+}
+
+.service-card{
+    position:relative;
+
+    min-height:350px;
+
+    padding:34px;
+
+    border-radius:var(--radius);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.055),
+            rgba(255,255,255,.02)
+        ),
+        rgba(13,13,16,.88);
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    overflow:hidden;
+
+    transition:
+        transform .42s
+        cubic-bezier(.2,.8,.2,1),
+
+        box-shadow .42s ease,
+
+        border-color .42s ease;
+
+    transform-style:preserve-3d;
+}
+
+.service-card:hover{
+    transform:
+        translateY(-15px)
+        scale(1.045);
+
+    border-color:
+        rgba(255,122,0,.28);
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.48),
+
+        0 0 55px
+        rgba(255,122,0,.23);
+}
+
+.service-number{
+    position:absolute;
+
+    top:26px;
+    left:28px;
+
+    color:
+        rgba(255,255,255,.11);
+
+    font-size:52px;
+
+    font-weight:900;
+
+    direction:ltr;
+}
+
+.icon{
+    width:66px;
+    height:66px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,146,59,.18),
+            rgba(255,98,0,.05)
+        );
+
+    border:
+        1px solid
+        rgba(255,138,39,.18);
+
+    margin-bottom:30px;
+
+    font-size:30px;
+
+    transition:.35s ease;
+}
+
+.service-card:hover .icon{
+    transform:
+        rotate(-7deg)
+        scale(1.12);
+
+    box-shadow:
+        0 0 28px
+        rgba(255,122,0,.22);
+}
+
+.service-card h3{
+    font-size:25px;
+
+    margin-bottom:15px;
+}
+
+.service-card p{
+    color:#aaaab3;
+
+    font-size:15px;
+
+    line-height:2;
+}
+
+.service-tag{
+    display:inline-block;
+
+    margin-top:20px;
+
+    padding:
+        7px
+        11px;
+
+    font-size:12px;
+
+    border:
+        1px solid
+        rgba(255,122,0,.18);
+
+    border-radius:999px;
+
+    color:#ffc18b;
+
+    background:
+        rgba(255,122,0,.06);
+}
+
+
+/* =====================================================
+   CTA
+===================================================== */
+
+.cta-wrap{
+    position:relative;
+
+    overflow:hidden;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    border-radius:38px;
+
+    padding:
+        80px
+        7vw;
+
+    text-align:center;
+
+    background:
+        radial-gradient(
+            circle at 50% 0%,
+            rgba(255,122,0,.22),
+            transparent 40%
+        ),
+
+        linear-gradient(
+            180deg,
+            #15100d,
+            #0d0d10
+        );
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,.35);
+}
+
+.cta-wrap h2{
+    font-size:
+        clamp(
+            34px,
+            5.5vw,
+            66px
+        );
+
+    margin-bottom:18px;
+}
+
+.cta-wrap h2 span{
+    color:var(--orange-2);
+
+    text-shadow:
+        0 0 25px
+        rgba(255,122,0,.22);
+}
+
+.cta-wrap p{
+    max-width:710px;
+
+    margin:
+        0
+        auto
+        30px;
+
+    color:#b9b9c1;
+
+    line-height:2;
+
+    font-size:17px;
+}
+
+.cta-main{
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:
+        17px
+        30px;
+
+    color:#fff;
+
+    font-weight:900;
+
+    text-decoration:none;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9500,
+            #ff5c00
+        );
+
+    box-shadow:
+        0 15px 45px
+        rgba(255,105,0,.32);
+
+    transition:.3s ease;
+
+    cursor:pointer;
+}
+
+.cta-main:hover{
+    transform:
+        translateY(-5px)
+        scale(1.04);
+
+    box-shadow:
+        0 20px 62px
+        rgba(255,122,0,.48);
+}
+
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+footer{
+    padding:
+        34px
+        6vw
+        42px;
+}
+
+.footer-inner{
+    max-width:1240px;
+
+    margin:auto;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:20px;
+
+    padding-top:28px;
+
+    border-top:
+        1px solid
+        var(--line);
+
+    color:#85858f;
+
+    font-size:14px;
+}
+
+.footer-brand{
+    color:#e7e7eb;
+
+    font-weight:800;
+
+    direction:ltr;
+}
+
+
+/* =====================================================
+   BACK TO TOP
+===================================================== */
+
+.back-to-top{
+    position:fixed;
+
+    right:28px;
+    bottom:28px;
+
+    width:54px;
+    height:54px;
+
+    border:
+        1px solid
+        rgba(255,122,0,.32);
+
+    border-radius:17px;
+
+    background:
+        rgba(15,12,10,.78);
+
+    color:#fff;
+
+    display:grid;
+
+    place-items:center;
+
+    font-size:25px;
+
+    cursor:pointer;
+
+    z-index:90;
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transform:
+        translateY(20px)
+        scale(.85);
+
+    backdrop-filter:blur(14px);
+
+    transition:.35s ease;
+}
+
+.back-to-top.show{
+    opacity:1;
+
+    visibility:visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =====================================================
+   AUTH MODAL
+===================================================== */
+
+.auth-overlay{
+    position:fixed;
+
+    inset:0;
+
+    z-index:1000;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    background:
+        rgba(0,0,0,.72);
+
+    backdrop-filter:blur(16px);
+
+    opacity:0;
+
+    visibility:hidden;
+
+    transition:.35s ease;
+}
+
+.auth-overlay.active{
+    opacity:1;
+
+    visibility:visible;
+}
+
+.auth-box{
+    width:min(460px,100%);
+
+    max-height:90vh;
+
+    overflow:auto;
+
+    position:relative;
+
+    padding:34px;
+
+    border:
+        1px solid
+        rgba(255,122,0,.22);
+
+    border-radius:30px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(25,20,16,.98),
+            rgba(10,10,13,.98)
+        );
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,.65),
+
+        0 0 60px
+        rgba(255,122,0,.12);
+
+    transform:
+        translateY(25px)
+        scale(.95);
+
+    transition:.35s ease;
+}
+
+.auth-overlay.active .auth-box{
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+.auth-close{
+    position:absolute;
+
+    top:15px;
+    left:15px;
+
+    width:38px;
+    height:38px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:20px;
+}
+
+.auth-logo{
+    width:65px;
+    height:65px;
+
+    margin:
+        0
+        auto
+        20px;
+
+    display:grid;
+
+    place-items:center;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9500,
+            #ff5100
+        );
+
+    font-weight:900;
+
+    box-shadow:
+        0 0 40px
+        rgba(255,122,0,.35);
+}
+
+.auth-title{
+    text-align:center;
+
+    font-size:28px;
+
+    margin-bottom:8px;
+}
+
+.auth-subtitle{
+    text-align:center;
+
+    color:#9999a3;
+
+    font-size:14px;
+
+    line-height:1.9;
+
+    margin-bottom:25px;
+}
+
+.auth-tabs{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    padding:5px;
+
+    border-radius:15px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    margin-bottom:22px;
+}
+
+.auth-tab{
+    border:0;
+
+    padding:12px;
+
+    border-radius:11px;
+
+    background:transparent;
+
+    color:#999;
+
+    cursor:pointer;
+
+    font-family:inherit;
+
+    transition:.25s;
+}
+
+.auth-tab.active{
+    background:
+        rgba(255,122,0,.16);
+
+    color:#fff;
+}
+
+.auth-form{
+    display:none;
+}
+
+.auth-form.active{
+    display:block;
+}
+
+.input-group{
+    margin-bottom:15px;
+}
+
+.input-group label{
+    display:block;
+
+    color:#d8d8dd;
+
+    font-size:13px;
+
+    margin-bottom:8px;
+}
+
+.input-group input{
+    width:100%;
+
+    padding:
+        14px
+        15px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09);
+
+    border-radius:14px;
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:#fff;
+
+    outline:none;
+
+    font-family:inherit;
+
+    direction:rtl;
+
+    transition:.25s;
+}
+
+.input-group input:focus{
+    border-color:
+        rgba(255,122,0,.55);
+
+    box-shadow:
+        0 0 25px
+        rgba(255,122,0,.09);
+}
+
+.auth-submit{
+    width:100%;
+
+    padding:15px;
+
+    border:0;
+
+    border-radius:15px;
+
+    color:#fff;
+
+    font-family:inherit;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff9500,
+            #ff5c00
+        );
+
+    box-shadow:
+        0 12px 35px
+        rgba(255,100,0,.22);
+
+    transition:.25s;
+}
+
+.auth-submit:hover{
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 16px 45px
+        rgba(255,122,0,.35);
+}
+
+.auth-message{
+    display:none;
+
+    margin-bottom:16px;
+
+    padding:12px 14px;
+
+    border-radius:13px;
+
+    font-size:13px;
+
+    line-height:1.8;
+}
+
+.auth-message.show{
+    display:block;
+}
+
+.auth-message.error{
+    color:#ffb0a5;
+
+    background:
+        rgba(255,60,40,.08);
+
+    border:
+        1px solid
+        rgba(255,60,40,.15);
+}
+
+.auth-message.success{
+    color:#b7ffc9;
+
+    background:
+        rgba(40,255,100,.07);
+
+    border:
+        1px solid
+        rgba(40,255,100,.13);
+}
+
+.otp-info{
+    text-align:center;
+
+    color:#aaaab3;
+
+    font-size:14px;
+
+    line-height:2;
+
+    margin-bottom:20px;
+}
+
+.otp-phone{
+    color:
+        var(--orange-2);
+
+    direction:ltr;
+
+    display:inline-block;
+}
+
+.otp-input{
+    text-align:center !important;
+
+    direction:ltr !important;
+
+    letter-spacing:8px;
+
+    font-size:24px !important;
+
+    font-weight:900;
+}
+
+.resend{
+    display:block;
+
+    width:max-content;
+
+    margin:
+        16px
+        auto
+        0;
+
+    border:0;
+
+    background:transparent;
+
+    color:#ffb26d;
+
+    cursor:pointer;
+
+    font-family:inherit;
+}
+
+
+/* =====================================================
+   LOGGED USER
+===================================================== */
+
+.user-state{
+    display:none;
+
+    align-items:center;
+
+    gap:8px;
+}
+
+.user-state.show{
+    display:flex;
+}
+
+.user-name{
+    color:#ffd1a8;
+
+    font-size:13px;
+
+    max-width:110px;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+}
+
+.logout-btn{
+    border:0;
+
+    padding:
+        9px
+        12px;
+
+    border-radius:11px;
+
+    color:#ffaaa0;
+
+    background:
+        rgba(255,60,40,.08);
+
+    cursor:pointer;
+
+    font-family:inherit;
+}
+
+
+/* =====================================================
+   REVEAL
+===================================================== */
+
+.reveal{
+    opacity:0;
+
+    transform:
+        translateY(35px)
+        scale(.985);
+
+    filter:blur(7px);
+
+    transition:
+        opacity .8s ease,
+
+        transform .8s
+        cubic-bezier(.2,.8,.2,1),
+
+        filter .8s ease;
+}
+
+.reveal.visible{
+    opacity:1;
+
+    transform:none;
+
+    filter:none;
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+
+        transform:
+            translateY(25px);
+
+        filter:blur(8px);
+    }
+
+    to{
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+        filter:blur(0);
+    }
+}
+
+
+/* =====================================================
+   MOUSE GLOW
+===================================================== */
+
+.mouse-glow{
+    position:fixed;
+
+    width:360px;
+    height:360px;
+
+    border-radius:50%;
+
+    pointer-events:none;
+
+    z-index:-1;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,122,0,.09),
+            transparent 67%
+        );
+
+    transform:
+        translate(-50%,-50%);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media(max-width:900px){
+
+    .services-grid{
+        grid-template-columns:1fr;
+    }
+
+    .nav-links a{
+        display:none;
+    }
+
+}
+
+@media(max-width:600px){
+
+    header{
+        padding:
+            12px
+            4vw;
+    }
+
+    .hero{
+        padding-inline:3vw;
+    }
+
+    section{
+        padding:
+            85px
+            4vw;
+    }
+
+    .hero h1{
+        font-size:
+            clamp(
+                21px,
+                7.7vw,
+                45px
+            );
+
+        letter-spacing:-1px;
+    }
+
+    .dash{
+        margin:
+            0
+            5px;
+    }
+
+    .footer-inner{
+        flex-direction:column;
+
+        text-align:center;
+    }
+
+    .cta-wrap{
+        padding:
+            65px
+            22px;
+    }
+
+    .auth-box{
+        padding:25px 20px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="grid"></div>
+<div class="noise"></div>
+
+<div class="orb one"></div>
+<div class="orb two"></div>
+
+<div class="mouse-glow" id="mouseGlow"></div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header>
+
+<nav class="nav">
+
+    <div class="brand">
+
+        <div class="brand-mark">
+            MTA
+        </div>
+
+        <div class="brand-text">
+            MTA Studio
+        </div>
+
+    </div>
+
+
+    <div class="nav-links">
+
+        <a href="#home">
+            خانه
+        </a>
+
+        <a href="#services">
+            خدمات
+        </a>
+
+        <a href="#start">
+            ثبت پروژه
+        </a>
+
+        <button
+            class="login-button"
+            id="openAuth"
+        >
+            ورود / ثبت‌نام
+        </button>
+
+    </div>
+
+
+    <div
+        class="user-state"
+        id="userState"
+    >
+
+        <span
+            class="user-name"
+            id="userName"
+        ></span>
+
+        <button
+            class="logout-btn"
+            id="logoutBtn"
+        >
+            خروج
+        </button>
+
+    </div>
+
+</nav>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main>
+
+
+<!-- HERO -->
+
+<section
+    class="hero"
+    id="home"
+>
+
+<div class="hero-inner">
+
+    <div class="pill">
+        استودیو خلاقیت دیجیتال • MTA Studio
+    </div>
+
+
+    <h1>
+
+        <span class="brand-big">
+            ام . تی . ای
+        </span>
+
+        <span class="dash">
+            —
+        </span>
+
+        <span class="typing-wrap">
+
+            <span
+                class="typed"
+                id="typedText"
+            ></span>
+
+            <span class="cursor"></span>
+
+        </span>
+
+    </h1>
+
+
+    <p>
+        جایی که ایده‌ها فقط در حد فکر باقی نمی‌مانند.
+        ما با ترکیب خلاقیت، طراحی و تکنولوژی،
+        پروژه‌های دیجیتال شما را به تجربه‌ای
+        حرفه‌ای، چشم‌گیر و ماندگار تبدیل می‌کنیم.
+    </p>
+
+
+    <div class="hero-actions">
+
+        <a
+            href="#services"
+            class="btn primary"
+        >
+            مشاهده خدمات
+        </a>
+
+        <a
+            href="#start"
+            class="btn secondary"
+        >
+            شروع یک پروژه
+        </a>
+
+    </div>
+
+</div>
+
+</section>
+
+
+
+<!-- SERVICES -->
+
+<section id="services">
+
+<div class="container">
+
+    <div class="section-title reveal">
+
+        <div class="eyebrow">
+            خدمات MTA STUDIO
+        </div>
+
+        <h2>
+            سه مسیر برای تبدیل ایده به یک خروجی حرفه‌ای
+        </h2>
+
+        <p>
+            از تدوین ویدیو تا طراحی وب و توسعه ربات؛
+            هر پروژه با تمرکز روی کیفیت، هویت بصری
+            و تجربه کاربری اجرا می‌شود.
+        </p>
+
+    </div>
+
+
+    <div class="services-grid">
+
+
+        <article class="service-card reveal">
+
+            <span class="service-number">
+                01
+            </span>
+
+            <div class="icon">
+                🎬
+            </div>
+
+            <h3>
+                تدوین ویدیو
+            </h3>
+
+            <p>
+                تدوین حرفه‌ای برای محتوای شبکه‌های اجتماعی،
+                ویدیوهای تبلیغاتی، کلیپ‌های کوتاه و پروژه‌های
+                شخصی با تمرکز روی ریتم، روایت و هویت بصری.
+            </p>
+
+            <span class="service-tag">
+                Video Editing
+            </span>
+
+        </article>
+
+
+        <article class="service-card reveal">
+
+            <span class="service-number">
+                02
+            </span>
+
+            <div class="icon">
+                ◈
+            </div>
+
+            <h3>
+                طراحی وب
+            </h3>
+
+            <p>
+                طراحی وب‌سایت‌های مدرن، واکنش‌گرا و سریع
+                با ظاهر اختصاصی، انیمیشن‌های جذاب و
+                تجربه کاربری حرفه‌ای.
+            </p>
+
+            <span class="service-tag">
+                Web Design
+            </span>
+
+        </article>
+
+
+        <article class="service-card reveal">
+
+            <span class="service-number">
+                03
+            </span>
+
+            <div class="icon">
+                🤖
+            </div>
+
+            <h3>
+                ساخت ربات
+            </h3>
+
+            <p>
+                طراحی و توسعه ربات‌های کاربردی و سفارشی
+                برای پیام‌رسان‌های
+                <strong style="color:#ffd2aa">
+                    بله و تلگرام
+                </strong>
+                با امکانات اختصاصی متناسب با نیاز پروژه.
+            </p>
+
+            <span class="service-tag">
+                Bot Development
+            </span>
+
+        </article>
+
+
+    </div>
+
+</div>
+
+</section>
+
+
+
+<!-- CTA -->
+
+<section id="start">
+
+<div class="container">
+
+<div class="cta-wrap reveal">
+
+    <div class="eyebrow">
+        از ایده تا اجرا
+    </div>
+
+    <h2>
+        وقتشه ایده‌تون رو به
+        <span>
+            یک اثر واقعی
+        </span>
+        تبدیل کنیم.
+    </h2>
+
+    <p>
+        ایده‌تان را با ما در میان بگذارید.
+        تیم MTA Studio آماده است تا با ترکیب
+        خلاقیت، طراحی و تکنولوژی، مسیر تبدیل
+        ایده شما به یک پروژه حرفه‌ای را آغاز کند.
+    </p>
+
+    <button
+        class="cta-main"
+        id="projectButton"
+    >
+        ثبت درخواست پروژه
+        <span>
+            ←
+        </span>
+    </button>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+
+<!-- =====================================================
+     BACK TO TOP
+===================================================== -->
+
+<button
+    class="back-to-top"
+    id="backToTop"
+    aria-label="بازگشت به بالا"
+>
+    ↑
+</button>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+<div class="footer-inner">
+
+    <div class="footer-brand">
+        MTA Studio
+    </div>
+
+    <div>
+        تمامی حقوق این وب‌سایت محفوظ است ©
+        <span id="year"></span>
+    </div>
+
+</div>
+
+</footer>
+
+
+
+<!-- =====================================================
+     AUTH MODAL
+===================================================== -->
+
+<div
+    class="auth-overlay"
+    id="authOverlay"
+>
+
+<div class="auth-box">
+
+
+<button
+    class="auth-close"
+    id="authClose"
+>
+    ×
+</button>
+
+
+<div class="auth-logo">
+    MTA
+</div>
+
+
+<h2
+    class="auth-title"
+    id="authTitle"
+>
+    ورود به MTA Studio
+</h2>
+
+
+<p
+    class="auth-subtitle"
+    id="authSubtitle"
+>
+    برای مدیریت پروژه‌ها وارد حساب خود شوید.
+</p>
+
+
+<!-- TABS -->
+
+<div
+    class="auth-tabs"
+    id="authTabs"
+>
+
+<button
+    class="auth-tab active"
+    data-tab="login"
+>
+    ورود
+</button>
+
+<button
+    class="auth-tab"
+    data-tab="signup"
+>
+    ثبت‌نام
+</button>
+
+</div>
+
+
+<!-- MESSAGE -->
+
+<div
+    class="auth-message"
+    id="authMessage"
+></div>
+
+
+
+<!-- LOGIN -->
+
+<form
+    class="auth-form active"
+    id="loginForm"
+>
+
+<div class="input-group">
+
+<label>
+    شماره تلفن
+</label>
+
+<input
+    type="tel"
+    id="loginPhone"
+    placeholder="09123456789"
+    maxlength="11"
+    autocomplete="tel"
+>
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+    رمز عبور
+</label>
+
+<input
+    type="password"
+    id="loginPassword"
+    placeholder="رمز عبور"
+    autocomplete="current-password"
+>
+
+</div>
+
+
+<button
+    class="auth-submit"
+    type="submit"
+>
+    ورود به حساب
+</button>
+
+</form>
+
+
+
+<!-- SIGNUP -->
+
+<form
+    class="auth-form"
+    id="signupForm"
+>
+
+<div class="input-group">
+
+<label>
+    نام و نام خانوادگی
+</label>
+
+<input
+    type="text"
+    id="signupName"
+    placeholder="مثلاً محمد محمدی"
+    autocomplete="name"
+>
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+    شماره تلفن
+</label>
+
+<input
+    type="tel"
+    id="signupPhone"
+    placeholder="09123456789"
+    maxlength="11"
+    autocomplete="tel"
+>
+
+</div>
+
+
+<div class="input-group">
+
+<label>
+    رمز عبور
+</label>
+
+<input
+    type="password"
+    id="signupPassword"
+    placeholder="حداقل ۶ کاراکتر"
+    autocomplete="new-password"
+>
+
+</div>
+
+
+<button
+    class="auth-submit"
+    type="submit"
+>
+    ساخت حساب
+</button>
+
+</form>
+
+
+
+<!-- OTP -->
+
+<form
+    class="auth-form"
+    id="otpForm"
+>
+
+<div class="otp-info">
+
+    کد ۶ رقمی ارسال‌شده برای شماره
+
+    <br>
+
+    <span
+        class="otp-phone"
+        id="otpPhone"
+    ></span>
+
+    <br>
+
+    را وارد کنید.
+
+</div>
+
+
+<div class="input-group">
+
+<input
+    class="otp-input"
+    type="text"
+    id="otpCode"
+    maxlength="6"
+    inputmode="numeric"
+    autocomplete="one-time-code"
+    placeholder="••••••"
+>
+
+</div>
+
+
+<button
+    class="auth-submit"
+    type="submit"
+>
+    تأیید شماره
+</button>
+
+
+<button
+    class="resend"
+    type="button"
+    id="resendOtp"
+>
+    ارسال مجدد کد
+</button>
+
+</form>
+
+
+</div>
+
+</div>
+
+
+
+<script>
+
+/* =====================================================
+   TYPING
+===================================================== */
+
+const words = [
+    "طراحی وب",
+    "تدوین ویدیو",
+    "ساخت ربات"
+];
+
+const typedText =
+    document.getElementById("typedText");
+
+let wordIndex = 0;
+let charIndex = 0;
+let deleting = false;
+
+function typeLoop(){
+
+    const currentWord =
+        words[wordIndex];
+
+    if(!deleting){
+
+        charIndex++;
+
+        typedText.textContent =
+            currentWord.slice(
+                0,
+                charIndex
+            );
+
+        if(
+            charIndex ===
+            currentWord.length
+        ){
+
+            deleting = true;
+
+            setTimeout(
+                typeLoop,
+                1450
+            );
+
+            return;
+        }
+
+        setTimeout(
+            typeLoop,
+            90 + Math.random()*45
+        );
+
+    }else{
+
+        charIndex--;
+
+        typedText.textContent =
+            currentWord.slice(
+                0,
+                charIndex
+            );
+
+        if(charIndex === 0){
+
+            deleting = false;
+
+            wordIndex =
+                (wordIndex + 1)
+                % words.length;
+
+            setTimeout(
+                typeLoop,
+                320
+            );
+
+            return;
+        }
+
+        setTimeout(
+            typeLoop,
+            52
+        );
+    }
+}
+
+setTimeout(
+    typeLoop,
+    800
+);
+
+
+/* =====================================================
+   REVEAL
+===================================================== */
+
+const revealItems =
+    document.querySelectorAll(
+        ".reveal"
+    );
+
+const observer =
+    new IntersectionObserver(
+        entries => {
+
+            entries.forEach(
+                entry => {
+
+                    if(
+                        entry.isIntersecting
+                    ){
+
+                        entry.target
+                            .classList
+                            .add("visible");
+
+                        observer.unobserve(
+                            entry.target
+                        );
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold:.14
+        }
+    );
+
+revealItems.forEach(
+    (item,index) => {
+
+        item.style.transitionDelay =
+            `${Math.min(
+                index*.08,
+                .32
+            )}s`;
+
+        observer.observe(item);
+    }
+);
+
+
+/* =====================================================
+   MOUSE GLOW
+===================================================== */
+
+const mouseGlow =
+    document.getElementById(
+        "mouseGlow"
+    );
+
+window.addEventListener(
+    "pointermove",
+    e => {
+
+        mouseGlow.style.left =
+            e.clientX + "px";
+
+        mouseGlow.style.top =
+            e.clientY + "px";
+
+    }
+);
+
+
+/* =====================================================
+   BACK TO TOP
+===================================================== */
+
+const backToTop =
+    document.getElementById(
+        "backToTop"
+    );
+
+window.addEventListener(
+    "scroll",
+    () => {
+
+        if(
+            window.scrollY > 650
+        ){
+
+            backToTop
+                .classList
+                .add("show");
+
+        }else{
+
+            backToTop
+                .classList
+                .remove("show");
+        }
+
+    },
+    {
+        passive:true
+    }
+);
+
+backToTop.addEventListener(
+    "click",
+    () => {
+
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+
+    }
+);
+
+
+/* =====================================================
+   AUTH ELEMENTS
+===================================================== */
+
+const authOverlay =
+    document.getElementById(
+        "authOverlay"
+    );
+
+const authClose =
+    document.getElementById(
+        "authClose"
+    );
+
+const openAuth =
+    document.getElementById(
+        "openAuth"
+    );
+
+const projectButton =
+    document.getElementById(
+        "projectButton"
+    );
+
+const authMessage =
+    document.getElementById(
+        "authMessage"
+    );
+
+const authTabs =
+    document.querySelectorAll(
+        ".auth-tab"
+    );
+
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
+
+const signupForm =
+    document.getElementById(
+        "signupForm"
+    );
+
+const otpForm =
+    document.getElementById(
+        "otpForm"
+    );
+
+const authTabsBox =
+    document.getElementById(
+        "authTabs"
+    );
+
+const authTitle =
+    document.getElementById(
+        "authTitle"
+    );
+
+const authSubtitle =
+    document.getElementById(
+        "authSubtitle"
+    );
+
+const otpPhone =
+    document.getElementById(
+        "otpPhone"
+    );
+
+const resendOtp =
+    document.getElementById(
+        "resendOtp"
+    );
+
+const userState =
+    document.getElementById(
+        "userState"
+    );
+
+const userName =
+    document.getElementById(
+        "userName"
+    );
+
+const logoutBtn =
+    document.getElementById(
+        "logoutBtn"
+    );
+
+
+let pendingPhone = "";
+
+
+/* =====================================================
+   AUTH MODAL
+===================================================== */
+
+function openAuthModal(){
+
+    authOverlay
+        .classList
+        .add("active");
+
+}
+
+function closeAuthModal(){
+
+    authOverlay
+        .classList
+        .remove("active");
+
+}
+
+openAuth.addEventListener(
+    "click",
+    openAuthModal
+);
+
+authClose.addEventListener(
+    "click",
+    closeAuthModal
+);
+
+authOverlay.addEventListener(
+    "click",
+    e => {
+
+        if(
+            e.target === authOverlay
+        ){
+
+            closeAuthModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+    message,
+    type="error"
+){
+
+    authMessage.textContent =
+        message;
+
+    authMessage.className =
+        "auth-message show " +
+        type;
+}
+
+function clearMessage(){
+
+    authMessage.className =
+        "auth-message";
+}
+
+
+/* =====================================================
+   TABS
+===================================================== */
+
+function switchTab(tab){
+
+    clearMessage();
+
+    authTabs.forEach(
+        button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.tab === tab
+            );
+
+        }
+    );
+
+    loginForm.classList.toggle(
+        "active",
+        tab === "login"
+    );
+
+    signupForm.classList.toggle(
+        "active",
+        tab === "signup"
+    );
+
+    otpForm.classList.remove(
+        "active"
+    );
+
+    authTabsBox.style.display =
+        "grid";
+
+    authTitle.textContent =
+        tab === "login"
+        ? "ورود به MTA Studio"
+        : "ساخت حساب MTA Studio";
+
+    authSubtitle.textContent =
+        tab === "login"
+        ? "برای مدیریت پروژه‌ها وارد حساب خود شوید."
+        : "حساب خود را بسازید و پروژه‌تان را ثبت کنید.";
+}
+
+authTabs.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                switchTab(
+                    button.dataset.tab
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =====================================================
+   OTP SCREEN
+===================================================== */
+
+function showOtpScreen(phone){
+
+    pendingPhone = phone;
+
+    otpPhone.textContent =
+        phone;
+
+    loginForm.classList.remove(
+        "active"
+    );
+
+    signupForm.classList.remove(
+        "active"
+    );
+
+    otpForm.classList.add(
+        "active"
+    );
+
+    authTabsBox.style.display =
+        "none";
+
+    authTitle.textContent =
+        "تأیید شماره تلفن";
+
+    authSubtitle.textContent =
+        "برای ادامه، شماره موبایل خود را تأیید کنید.";
+
+    clearMessage();
+
+}
+
+
+/* =====================================================
+   SIGN UP
+===================================================== */
+
+signupForm.addEventListener(
+    "submit",
+    async e => {
+
+        e.preventDefault();
+
+        clearMessage();
+
+        const name =
+            document.getElementById(
+                "signupName"
+            ).value.trim();
+
+        const phone =
+            document.getElementById(
+                "signupPhone"
+            ).value.trim();
+
+        const password =
+            document.getElementById(
+                "signupPassword"
+            ).value;
+
+        if(!name){
+
+            showMessage(
+                "نام خود را وارد کنید."
+            );
+
+            return;
+        }
+
+        if(!/^09\d{9}$/.test(phone)){
+
+            showMessage(
+                "شماره موبایل معتبر نیست."
+            );
+
+            return;
+        }
+
+        if(password.length < 6){
+
+            showMessage(
+                "رمز عبور باید حداقل ۶ کاراکتر باشد."
+            );
+
+            return;
+        }
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/signup",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:JSON.stringify({
+                            name,
+                            phone,
+                            password
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if(!response.ok){
+
+                showMessage(
+                    data.message ||
+                    "ثبت‌نام ناموفق بود."
+                );
+
+                return;
+            }
+
+            showMessage(
+                data.message ||
+                "کد تأیید ارسال شد.",
+                "success"
+            );
+
+            setTimeout(
+                () => {
+                    showOtpScreen(phone);
+                },
+                500
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showMessage(
+                "ارتباط با سرور برقرار نشد."
+            );
+        }
+
+    }
+);
+
+
+/* =====================================================
+   VERIFY OTP
+===================================================== */
+
+otpForm.addEventListener(
+    "submit",
+    async e => {
+
+        e.preventDefault();
+
+        clearMessage();
+
+        const code =
+            document.getElementById(
+                "otpCode"
+            ).value.trim();
+
+        if(!/^\d{6}$/.test(code)){
+
+            showMessage(
+                "کد باید دقیقاً ۶ رقم باشد."
+            );
+
+            return;
+        }
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/verify-phone",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:JSON.stringify({
+                            phone:pendingPhone,
+                            code
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if(!response.ok){
+
+                showMessage(
+                    data.message ||
+                    "کد تأیید اشتباه است."
+                );
+
+                return;
+            }
+
+            showMessage(
+                "شماره با موفقیت تأیید شد.",
+                "success"
+            );
+
+            updateUserState(
+                data.user
+            );
+
+            setTimeout(
+                () => {
+                    closeAuthModal();
+                },
+                800
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showMessage(
+                "ارتباط با سرور برقرار نشد."
+            );
+        }
+
+    }
+);
+
+
+/* =====================================================
+   RESEND OTP
+===================================================== */
+
+resendOtp.addEventListener(
+    "click",
+    async () => {
+
+        if(!pendingPhone){
+            return;
+        }
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/resend-otp",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:JSON.stringify({
+                            phone:pendingPhone
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if(!response.ok){
+
+                showMessage(
+                    data.message ||
+                    "ارسال مجدد ناموفق بود."
+                );
+
+                return;
+            }
+
+            showMessage(
+                data.message,
+                "success"
+            );
+
+        }catch(error){
+
+            showMessage(
+                "ارتباط با سرور برقرار نشد."
+            );
+        }
+
+    }
+);
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+loginForm.addEventListener(
+    "submit",
+    async e => {
+
+        e.preventDefault();
+
+        clearMessage();
+
+        const phone =
+            document.getElementById(
+                "loginPhone"
+            ).value.trim();
+
+        const password =
+            document.getElementById(
+                "loginPassword"
+            ).value;
+
+        if(!/^09\d{9}$/.test(phone)){
+
+            showMessage(
+                "شماره موبایل معتبر نیست."
+            );
+
+            return;
+        }
+
+        if(!password){
+
+            showMessage(
+                "رمز عبور را وارد کنید."
+            );
+
+            return;
+        }
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/login",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:JSON.stringify({
+                            phone,
+                            password
+                        })
+                    }
+                );
+
+            const data =
+                await response.json();
+
+            if(
+                response.status === 403 &&
+                data.requiresVerification
+            ){
+
+                showMessage(
+                    data.message
+                );
+
+                showOtpScreen(phone);
+
+                return;
+            }
+
+            if(!response.ok){
+
+                showMessage(
+                    data.message ||
+                    "ورود ناموفق بود."
+                );
+
+                return;
+            }
+
+            updateUserState(
+                data.user
+            );
+
+            showMessage(
+                "خوش آمدید.",
+                "success"
+            );
+
+            setTimeout(
+                closeAuthModal,
+                600
+            );
+
+        }catch(error){
+
+            console.error(error);
+
+            showMessage(
+                "ارتباط با سرور برقرار نشد."
+            );
+        }
+
+    }
+);
+
+
+/* =====================================================
+   USER STATE
+===================================================== */
+
+function updateUserState(user){
+
+    if(!user){
+        return;
+    }
+
+    openAuth.style.display =
+        "none";
+
+    userState.classList.add(
+        "show"
+    );
+
+    userName.textContent =
+        user.name;
+
+}
+
+
+/* =====================================================
+   CHECK LOGIN
+===================================================== */
+
+async function checkCurrentUser(){
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/me"
+            );
+
+        if(!response.ok){
+            return;
+        }
+
+        const data =
+            await response.json();
+
+        if(
+            data.success &&
+            data.user
+        ){
+
+            updateUserState(
+                data.user
+            );
+        }
+
+    }catch(error){
+
+        console.log(
+            "User check failed."
+        );
+    }
+}
+
+checkCurrentUser();
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+logoutBtn.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            await fetch(
+                "/api/logout",
+                {
+                    method:"POST"
+                }
+            );
+
+        }catch(error){}
+
+        userState.classList.remove(
+            "show"
+        );
+
+        openAuth.style.display =
+            "";
+
+        switchTab("login");
+
+        openAuthModal();
+    }
+);
+
+
+/* =====================================================
+   PROJECT BUTTON
+===================================================== */
+
+projectButton.addEventListener(
+    "click",
+    async () => {
+
+        try{
+
+            const response =
+                await fetch(
+                    "/api/me"
+                );
+
+            if(response.ok){
+
+                /*
+                    کاربر وارد شده.
+                    فعلاً چون صفحه ثبت پروژه
+                    را هنوز نساخته‌ایم،
+                    پیام نمایش می‌دهیم.
+                */
+
+                showMessage(
+                    "حساب شما آماده است. در مرحله بعد فرم ثبت پروژه را فعال می‌کنیم.",
+                    "success"
+                );
+
+                openAuthModal();
+
+                return;
+            }
+
+            showMessage(
+                "برای ثبت پروژه ابتدا وارد حساب خود شوید."
+            );
+
+            switchTab("login");
+
+            openAuthModal();
+
+        }catch(error){
+
+            switchTab("login");
+
+            openAuthModal();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   YEAR
+===================================================== */
+
+document.getElementById(
+    "year"
+).textContent =
+    new Date().getFullYear();
+
+</script>
+
+</body>
+</html>
