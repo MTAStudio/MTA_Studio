@@ -1,4 +1,4 @@
-```js
+ 
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -12,8 +12,6 @@ const Database = require("better-sqlite3");
 
 const PORT = Number(process.env.PORT) || 3000;
 
-// آدرس GitHub Pages خودت را بعداً اینجا قرار بده.
-// اگر فعلاً تست می‌کنی، مقدار * قابل استفاده است.
 const FRONTEND_ORIGIN =
     process.env.FRONTEND_ORIGIN || "*";
 
@@ -28,6 +26,7 @@ const db = new Database(
 db.pragma("journal_mode = WAL");
 db.pragma("foreign_keys = ON");
 
+// USERS
 db.exec(
     "CREATE TABLE IF NOT EXISTS users (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -40,6 +39,7 @@ db.exec(
     ")"
 );
 
+// PROJECTS
 db.exec(
     "CREATE TABLE IF NOT EXISTS projects (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -56,6 +56,7 @@ db.exec(
     ")"
 );
 
+// OTP
 db.exec(
     "CREATE TABLE IF NOT EXISTS otp_codes (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -67,6 +68,7 @@ db.exec(
     ")"
 );
 
+// NOTIFICATIONS
 db.exec(
     "CREATE TABLE IF NOT EXISTS notifications (" +
     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -98,7 +100,10 @@ function createSession(user) {
 
 function getSessionToken(req) {
     const cookie = req.headers.cookie || "";
-    const match = cookie.match(/(?:^|;\s*)mta_session=([^;]+)/);
+
+    const match = cookie.match(
+        /(?:^|;\s*)mta_session=([^;]+)/
+    );
 
     return match ? match[1] : null;
 }
@@ -116,25 +121,22 @@ function getCurrentUser(req) {
         return null;
     }
 
-    return db.prepare(`
-        SELECT
-            id,
-            name,
-            phone,
-            role,
-            phone_verified,
-            created_at
-        FROM users
-        WHERE id = ?
-    `).get(session.userId);
+    const user = db.prepare(
+        "SELECT id, name, phone, role, phone_verified, created_at " +
+        "FROM users " +
+        "WHERE id = ?"
+    ).get(session.userId);
+
+    return user || null;
 }
 
 function setSessionCookie(token) {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction =
+        process.env.NODE_ENV === "production";
 
     if (isProduction) {
         return [
-            `mta_session=${token}`,
+            "mta_session=" + token,
             "HttpOnly",
             "Path=/",
             "SameSite=None",
@@ -144,7 +146,7 @@ function setSessionCookie(token) {
     }
 
     return [
-        `mta_session=${token}`,
+        "mta_session=" + token,
         "HttpOnly",
         "Path=/",
         "SameSite=Lax",
@@ -153,7 +155,8 @@ function setSessionCookie(token) {
 }
 
 function clearSessionCookie() {
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction =
+        process.env.NODE_ENV === "production";
 
     if (isProduction) {
         return [
@@ -179,9 +182,15 @@ function clearSessionCookie() {
 // HELPERS
 // ======================================================
 
-function sendJSON(res, statusCode, data, extraHeaders = {}) {
+function sendJSON(
+    res,
+    statusCode,
+    data,
+    extraHeaders = {}
+) {
     res.writeHead(statusCode, {
-        "Content-Type": "application/json; charset=utf-8",
+        "Content-Type":
+            "application/json; charset=utf-8",
         ...extraHeaders
     });
 
@@ -197,15 +206,23 @@ function readBody(req) {
 
             if (body.length > 100000) {
                 req.destroy();
-                reject(new Error("Request too large"));
+                reject(
+                    new Error("Request too large")
+                );
             }
         });
 
         req.on("end", () => {
             try {
-                resolve(body ? JSON.parse(body) : {});
+                resolve(
+                    body
+                        ? JSON.parse(body)
+                        : {}
+                );
             } catch {
-                reject(new Error("Invalid JSON"));
+                reject(
+                    new Error("Invalid JSON")
+                );
             }
         });
 
@@ -219,7 +236,10 @@ function validPhone(phone) {
 
 function generateOTP() {
     return String(
-        Math.floor(100000 + Math.random() * 900000)
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        )
     );
 }
 
@@ -238,24 +258,21 @@ function createOTP(phone) {
     const code = generateOTP();
     const codeHash = hashOTP(code);
 
-    // ۲ دقیقه اعتبار
-    const expiresAt = Date.now() + (2 * 60 * 1000);
+    const expiresAt =
+        Date.now() + (2 * 60 * 1000);
 
     // حذف کدهای قبلی
-    db.prepare(`
-        DELETE FROM otp_codes
-        WHERE phone = ?
-    `).run(phone);
+    db.prepare(
+        "DELETE FROM otp_codes " +
+        "WHERE phone = ?"
+    ).run(phone);
 
-    db.prepare(`
-        INSERT INTO otp_codes
-        (
-            phone,
-            code_hash,
-            expires_at
-        )
-        VALUES (?, ?, ?)
-    `).run(
+    // ایجاد کد جدید
+    db.prepare(
+        "INSERT INTO otp_codes " +
+        "(phone, code_hash, expires_at) " +
+        "VALUES (?, ?, ?)"
+    ).run(
         phone,
         codeHash,
         expiresAt
@@ -269,8 +286,8 @@ function createOTP(phone) {
 // ======================================================
 
 async function sendSMS(phone, code) {
-    // فعلاً ارسال واقعی SMS نداریم.
-    // کد در لاگ Render نمایش داده می‌شود.
+    // فعلاً SMS واقعی نداریم.
+    // کد OTP در لاگ Render نمایش داده می‌شود.
 
     console.log("");
     console.log("================================");
@@ -300,53 +317,56 @@ async function handleAPI(req, res) {
         try {
             const body = await readBody(req);
 
-            const name = String(
-                body.name || ""
-            ).trim();
+            const name =
+                String(body.name || "").trim();
 
-            const phone = String(
-                body.phone || ""
-            ).trim();
+            const phone =
+                String(body.phone || "").trim();
 
-            const password = String(
-                body.password || ""
-            );
+            const password =
+                String(body.password || "");
 
             if (!name) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "نام را وارد کنید."
+                    message:
+                        "نام را وارد کنید."
                 });
             }
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "شماره موبایل معتبر نیست."
+                    message:
+                        "شماره موبایل معتبر نیست."
                 });
             }
 
             if (password.length < 6) {
                 return sendJSON(res, 400, {
                     success: false,
-                    message: "رمز عبور باید حداقل ۶ کاراکتر باشد."
+                    message:
+                        "رمز عبور باید حداقل ۶ کاراکتر باشد."
                 });
             }
 
-            const existingUser = db.prepare(`
-                SELECT
-                    id,
-                    phone_verified
-                FROM users
-                WHERE phone = ?
-            `).get(phone);
+            const existingUser =
+                db.prepare(
+                    "SELECT id, phone_verified " +
+                    "FROM users " +
+                    "WHERE phone = ?"
+                ).get(phone);
 
             if (existingUser) {
 
                 if (!existingUser.phone_verified) {
-                    const code = createOTP(phone);
+                    const code =
+                        createOTP(phone);
 
-                    await sendSMS(phone, code);
+                    await sendSMS(
+                        phone,
+                        code
+                    );
 
                     return sendJSON(res, 200, {
                         success: true,
@@ -364,25 +384,28 @@ async function handleAPI(req, res) {
             }
 
             const passwordHash =
-                await bcrypt.hash(password, 12);
+                await bcrypt.hash(
+                    password,
+                    12
+                );
 
-            db.prepare(`
-                INSERT INTO users
-                (
-                    name,
-                    phone,
-                    password_hash
-                )
-                VALUES (?, ?, ?)
-            `).run(
+            db.prepare(
+                "INSERT INTO users " +
+                "(name, phone, password_hash) " +
+                "VALUES (?, ?, ?)"
+            ).run(
                 name,
                 phone,
                 passwordHash
             );
 
-            const code = createOTP(phone);
+            const code =
+                createOTP(phone);
 
-            await sendSMS(phone, code);
+            await sendSMS(
+                phone,
+                code
+            );
 
             return sendJSON(res, 201, {
                 success: true,
@@ -411,15 +434,18 @@ async function handleAPI(req, res) {
         req.url === "/api/verify-phone"
     ) {
         try {
-            const body = await readBody(req);
+            const body =
+                await readBody(req);
 
-            const phone = String(
-                body.phone || ""
-            ).trim();
+            const phone =
+                String(
+                    body.phone || ""
+                ).trim();
 
-            const code = String(
-                body.code || ""
-            ).trim();
+            const code =
+                String(
+                    body.code || ""
+                ).trim();
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
@@ -437,13 +463,14 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const otp = db.prepare(`
-                SELECT *
-                FROM otp_codes
-                WHERE phone = ?
-                ORDER BY id DESC
-                LIMIT 1
-            `).get(phone);
+            const otp =
+                db.prepare(
+                    "SELECT * " +
+                    "FROM otp_codes " +
+                    "WHERE phone = ? " +
+                    "ORDER BY id DESC " +
+                    "LIMIT 1"
+                ).get(phone);
 
             if (!otp) {
                 return sendJSON(res, 400, {
@@ -454,10 +481,11 @@ async function handleAPI(req, res) {
             }
 
             if (Date.now() > otp.expires_at) {
-                db.prepare(`
-                    DELETE FROM otp_codes
-                    WHERE id = ?
-                `).run(otp.id);
+
+                db.prepare(
+                    "DELETE FROM otp_codes " +
+                    "WHERE id = ?"
+                ).run(otp.id);
 
                 return sendJSON(res, 400, {
                     success: false,
@@ -467,10 +495,11 @@ async function handleAPI(req, res) {
             }
 
             if (otp.attempts >= 5) {
-                db.prepare(`
-                    DELETE FROM otp_codes
-                    WHERE id = ?
-                `).run(otp.id);
+
+                db.prepare(
+                    "DELETE FROM otp_codes " +
+                    "WHERE id = ?"
+                ).run(otp.id);
 
                 return sendJSON(res, 429, {
                     success: false,
@@ -479,14 +508,19 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const inputHash = hashOTP(code);
+            const inputHash =
+                hashOTP(code);
 
-            if (inputHash !== otp.code_hash) {
-                db.prepare(`
-                    UPDATE otp_codes
-                    SET attempts = attempts + 1
-                    WHERE id = ?
-                `).run(otp.id);
+            if (
+                inputHash !==
+                otp.code_hash
+            ) {
+
+                db.prepare(
+                    "UPDATE otp_codes " +
+                    "SET attempts = attempts + 1 " +
+                    "WHERE id = ?"
+                ).run(otp.id);
 
                 return sendJSON(res, 400, {
                     success: false,
@@ -495,11 +529,12 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const user = db.prepare(`
-                SELECT *
-                FROM users
-                WHERE phone = ?
-            `).get(phone);
+            const user =
+                db.prepare(
+                    "SELECT * " +
+                    "FROM users " +
+                    "WHERE phone = ?"
+                ).get(phone);
 
             if (!user) {
                 return sendJSON(res, 404, {
@@ -509,28 +544,24 @@ async function handleAPI(req, res) {
                 });
             }
 
-            db.prepare(`
-                UPDATE users
-                SET phone_verified = 1
-                WHERE id = ?
-            `).run(user.id);
+            db.prepare(
+                "UPDATE users " +
+                "SET phone_verified = 1 " +
+                "WHERE id = ?"
+            ).run(user.id);
 
-            db.prepare(`
-                DELETE FROM otp_codes
-                WHERE phone = ?
-            `).run(phone);
+            db.prepare(
+                "DELETE FROM otp_codes " +
+                "WHERE phone = ?"
+            ).run(phone);
 
-            const updatedUser = db.prepare(`
-                SELECT
-                    id,
-                    name,
-                    phone,
-                    role,
-                    phone_verified,
-                    created_at
-                FROM users
-                WHERE id = ?
-            `).get(user.id);
+            const updatedUser =
+                db.prepare(
+                    "SELECT id, name, phone, role, " +
+                    "phone_verified, created_at " +
+                    "FROM users " +
+                    "WHERE id = ?"
+                ).get(user.id);
 
             const token =
                 createSession(updatedUser);
@@ -570,11 +601,13 @@ async function handleAPI(req, res) {
         req.url === "/api/resend-otp"
     ) {
         try {
-            const body = await readBody(req);
+            const body =
+                await readBody(req);
 
-            const phone = String(
-                body.phone || ""
-            ).trim();
+            const phone =
+                String(
+                    body.phone || ""
+                ).trim();
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
@@ -584,11 +617,12 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const user = db.prepare(`
-                SELECT id
-                FROM users
-                WHERE phone = ?
-            `).get(phone);
+            const user =
+                db.prepare(
+                    "SELECT id " +
+                    "FROM users " +
+                    "WHERE phone = ?"
+                ).get(phone);
 
             if (!user) {
                 return sendJSON(res, 404, {
@@ -598,9 +632,13 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const code = createOTP(phone);
+            const code =
+                createOTP(phone);
 
-            await sendSMS(phone, code);
+            await sendSMS(
+                phone,
+                code
+            );
 
             return sendJSON(res, 200, {
                 success: true,
@@ -628,15 +666,18 @@ async function handleAPI(req, res) {
         req.url === "/api/login"
     ) {
         try {
-            const body = await readBody(req);
+            const body =
+                await readBody(req);
 
-            const phone = String(
-                body.phone || ""
-            ).trim();
+            const phone =
+                String(
+                    body.phone || ""
+                ).trim();
 
-            const password = String(
-                body.password || ""
-            );
+            const password =
+                String(
+                    body.password || ""
+                );
 
             if (!validPhone(phone)) {
                 return sendJSON(res, 400, {
@@ -646,11 +687,12 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const user = db.prepare(`
-                SELECT *
-                FROM users
-                WHERE phone = ?
-            `).get(phone);
+            const user =
+                db.prepare(
+                    "SELECT * " +
+                    "FROM users " +
+                    "WHERE phone = ?"
+                ).get(phone);
 
             if (!user) {
                 return sendJSON(res, 401, {
@@ -675,9 +717,14 @@ async function handleAPI(req, res) {
             }
 
             if (!user.phone_verified) {
-                const code = createOTP(phone);
 
-                await sendSMS(phone, code);
+                const code =
+                    createOTP(phone);
+
+                await sendSMS(
+                    phone,
+                    code
+                );
 
                 return sendJSON(res, 403, {
                     success: false,
@@ -731,7 +778,8 @@ async function handleAPI(req, res) {
         req.method === "GET" &&
         req.url === "/api/me"
     ) {
-        const user = getCurrentUser(req);
+        const user =
+            getCurrentUser(req);
 
         if (!user) {
             return sendJSON(res, 401, {
@@ -808,31 +856,40 @@ async function handleAPI(req, res) {
             const body =
                 await readBody(req);
 
-            const firstName = String(
-                body.firstName || ""
-            ).trim();
+            const firstName =
+                String(
+                    body.firstName || ""
+                ).trim();
 
-            const lastName = String(
-                body.lastName || ""
-            ).trim();
+            const lastName =
+                String(
+                    body.lastName || ""
+                ).trim();
 
-            const phone = String(
-                body.phone || user.phone
-            ).trim();
+            const phone =
+                String(
+                    body.phone || user.phone
+                ).trim();
 
-            const projectType = String(
-                body.projectType || ""
-            ).trim();
+            const projectType =
+                String(
+                    body.projectType || ""
+                ).trim();
 
-            const budget = String(
-                body.budget || ""
-            ).trim();
+            const budget =
+                String(
+                    body.budget || ""
+                ).trim();
 
-            const description = String(
-                body.description || ""
-            ).trim();
+            const description =
+                String(
+                    body.description || ""
+                ).trim();
 
-            if (!firstName || !lastName) {
+            if (
+                !firstName ||
+                !lastName
+            ) {
                 return sendJSON(res, 400, {
                     success: false,
                     message:
@@ -872,27 +929,21 @@ async function handleAPI(req, res) {
                 });
             }
 
-            const result = db.prepare(`
-                INSERT INTO projects
-                (
-                    user_id,
-                    first_name,
-                    last_name,
+            const result =
+                db.prepare(
+                    "INSERT INTO projects " +
+                    "(user_id, first_name, last_name, phone, " +
+                    "project_type, budget, description) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)"
+                ).run(
+                    user.id,
+                    firstName,
+                    lastName,
                     phone,
-                    project_type,
+                    projectType,
                     budget,
                     description
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `).run(
-                user.id,
-                firstName,
-                lastName,
-                phone,
-                projectType,
-                budget,
-                description
-            );
+                );
 
             return sendJSON(res, 201, {
                 success: true,
@@ -932,21 +983,14 @@ async function handleAPI(req, res) {
             });
         }
 
-        const projects = db.prepare(`
-            SELECT
-                id,
-                first_name,
-                last_name,
-                phone,
-                project_type,
-                budget,
-                description,
-                status,
-                created_at
-            FROM projects
-            WHERE user_id = ?
-            ORDER BY id DESC
-        `).all(user.id);
+        const projects =
+            db.prepare(
+                "SELECT id, first_name, last_name, phone, " +
+                "project_type, budget, description, status, created_at " +
+                "FROM projects " +
+                "WHERE user_id = ? " +
+                "ORDER BY id DESC"
+            ).all(user.id);
 
         return sendJSON(res, 200, {
             success: true,
@@ -954,9 +998,14 @@ async function handleAPI(req, res) {
         });
     }
 
+    // ==================================================
+    // API NOT FOUND
+    // ==================================================
+
     return sendJSON(res, 404, {
         success: false,
-        message: "API not found"
+        message:
+            "API not found"
     });
 }
 
@@ -973,12 +1022,15 @@ const server = http.createServer(
             // CORS
             // ==================================================
 
-            if (FRONTEND_ORIGIN === "*") {
+            if (
+                FRONTEND_ORIGIN === "*"
+            ) {
                 res.setHeader(
                     "Access-Control-Allow-Origin",
                     "*"
                 );
             } else {
+
                 res.setHeader(
                     "Access-Control-Allow-Origin",
                     FRONTEND_ORIGIN
@@ -1009,7 +1061,9 @@ const server = http.createServer(
             // PREFLIGHT
             // ==================================================
 
-            if (req.method === "OPTIONS") {
+            if (
+                req.method === "OPTIONS"
+            ) {
                 res.writeHead(204);
                 return res.end();
             }
@@ -1035,6 +1089,7 @@ const server = http.createServer(
                 req.url === "/" ||
                 req.url === "/index.html"
             ) {
+
                 const indexPath =
                     path.join(
                         __dirname,
@@ -1044,6 +1099,7 @@ const server = http.createServer(
                 if (
                     fs.existsSync(indexPath)
                 ) {
+
                     res.writeHead(200, {
                         "Content-Type":
                             "text/html; charset=utf-8"
@@ -1059,20 +1115,29 @@ const server = http.createServer(
                         "text/html; charset=utf-8"
                 });
 
-                return res.end(`
-                    <h1>MTA Studio</h1>
-                    <p>Backend is running.</p>
-                `);
+                return res.end(
+                    "<h1>MTA Studio</h1>" +
+                    "<p>Backend is running.</p>"
+                );
             }
 
             // ==================================================
             // STATIC FILES
             // ==================================================
 
-            const requestedPath =
-                decodeURIComponent(
-                    req.url.split("?")[0]
+            let requestedPath;
+
+            try {
+                requestedPath =
+                    decodeURIComponent(
+                        req.url.split("?")[0]
+                    );
+            } catch {
+                res.writeHead(400);
+                return res.end(
+                    "Bad Request"
                 );
+            }
 
             const normalizedPath =
                 path.normalize(
@@ -1086,10 +1151,14 @@ const server = http.createServer(
                 );
 
             const rootPath =
-                path.resolve(__dirname);
+                path.resolve(
+                    __dirname
+                );
 
             const resolvedFilePath =
-                path.resolve(filePath);
+                path.resolve(
+                    filePath
+                );
 
             if (
                 resolvedFilePath.startsWith(
@@ -1201,7 +1270,8 @@ server.listen(
             "================================"
         );
         console.log(
-            `Server running on port ${PORT}`
+            "Server running on port " +
+            PORT
         );
         console.log(
             "Database: connected"
@@ -1221,4 +1291,4 @@ server.listen(
         console.log("");
     }
 );
-```
+
