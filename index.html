@@ -1669,6 +1669,59 @@ footer{
 
 }
 
+
+/* =====================================================
+   USER / ADMIN PANEL
+===================================================== */
+.panel-button{
+    border:1px solid rgba(255,122,0,.28);
+    padding:9px 13px;
+    border-radius:11px;
+    background:rgba(255,122,0,.08);
+    color:#ffd0a7;
+    cursor:pointer;
+    font-family:inherit;
+}
+.panel-overlay{
+    position:fixed; inset:0; z-index:1200; display:flex; align-items:center; justify-content:center;
+    padding:20px; background:rgba(0,0,0,.78); backdrop-filter:blur(18px);
+    opacity:0; visibility:hidden; transition:.3s ease;
+}
+.panel-overlay.active{opacity:1;visibility:visible}
+.panel-shell{
+    width:min(1180px,100%); height:min(820px,92vh); overflow:hidden;
+    border:1px solid rgba(255,122,0,.22); border-radius:30px;
+    background:linear-gradient(180deg,rgba(24,19,15,.99),rgba(10,10,13,.99));
+    box-shadow:0 35px 120px rgba(0,0,0,.7),0 0 60px rgba(255,122,0,.1);
+    display:grid; grid-template-columns:260px 1fr;
+}
+.panel-sidebar{padding:24px;border-left:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.018);overflow:auto}
+.panel-profile{padding:18px;border:1px solid rgba(255,255,255,.07);border-radius:20px;background:rgba(255,255,255,.025);margin-bottom:18px}
+.panel-profile strong{display:block;font-size:18px;margin-bottom:7px}
+.panel-rank{display:inline-block;padding:5px 9px;border-radius:999px;background:rgba(255,122,0,.12);color:#ffc28c;font-size:12px}
+.panel-menu{display:grid;gap:8px}
+.panel-menu button{width:100%;text-align:right;border:0;padding:13px 14px;border-radius:13px;background:transparent;color:#bdbdc6;cursor:pointer;font-family:inherit;transition:.2s}
+.panel-menu button:hover,.panel-menu button.active{background:rgba(255,122,0,.11);color:#fff}
+.panel-main{position:relative;overflow:auto;padding:30px}
+.panel-close{position:absolute;top:18px;left:18px;width:40px;height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:white;cursor:pointer;font-size:20px}
+.panel-view{display:none}.panel-view.active{display:block}
+.panel-head{margin-bottom:24px}.panel-head h2{font-size:32px;margin-bottom:8px}.panel-head p{color:#9f9fa9;line-height:1.9}
+.panel-card{border:1px solid rgba(255,255,255,.08);border-radius:22px;background:rgba(255,255,255,.025);padding:22px;margin-bottom:18px}
+.panel-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.panel-field{display:grid;gap:8px}.panel-field.full{grid-column:1/-1}.panel-field label{font-size:13px;color:#d6d6dc}
+.panel-field input,.panel-field select,.panel-field textarea{width:100%;padding:14px 15px;border-radius:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);color:#fff;outline:none;font-family:inherit}
+.panel-field select option{background:#141418;color:#fff}.panel-field textarea{min-height:140px;resize:vertical;line-height:1.9}
+.panel-field input:focus,.panel-field select:focus,.panel-field textarea:focus{border-color:rgba(255,122,0,.5);box-shadow:0 0 24px rgba(255,122,0,.07)}
+.budget-options{display:flex;flex-wrap:wrap;gap:9px}.budget-chip{cursor:pointer}.budget-chip input{display:none}.budget-chip span{display:block;padding:10px 13px;border-radius:12px;border:1px solid rgba(255,255,255,.09);color:#aaa;background:rgba(255,255,255,.025)}.budget-chip input:checked+span{border-color:rgba(255,122,0,.45);background:rgba(255,122,0,.12);color:#fff}
+.panel-submit{padding:14px 22px;border:0;border-radius:14px;background:linear-gradient(135deg,#ff9500,#ff5c00);color:#fff;font-weight:900;cursor:pointer;font-family:inherit}
+.panel-message{display:none;margin-bottom:15px;padding:12px 14px;border-radius:13px;line-height:1.8}.panel-message.show{display:block}.panel-message.success{color:#b7ffc9;background:rgba(40,255,100,.07);border:1px solid rgba(40,255,100,.13)}.panel-message.error{color:#ffb0a5;background:rgba(255,60,40,.08);border:1px solid rgba(255,60,40,.15)}
+.project-list{display:grid;gap:13px}.project-item{border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:18px;background:rgba(255,255,255,.025)}
+.project-top{display:flex;justify-content:space-between;gap:15px;align-items:flex-start;margin-bottom:10px}.project-title{font-weight:900;font-size:17px}.project-meta{font-size:12px;color:#8f8f99;direction:ltr}.project-item p{color:#b1b1ba;line-height:1.9}.project-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.mini-btn{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.035);color:#ddd;padding:8px 11px;border-radius:10px;cursor:pointer;font-family:inherit}.mini-btn.danger{color:#ffaaa0;border-color:rgba(255,80,60,.18);background:rgba(255,60,40,.06)}.mini-btn.orange{color:#ffd0a7;border-color:rgba(255,122,0,.24);background:rgba(255,122,0,.07)}
+.status{display:inline-block;margin-top:10px;padding:5px 9px;border-radius:999px;font-size:12px;background:rgba(255,122,0,.09);color:#ffc28c}
+.about-lines{display:grid;gap:12px;color:#b8b8c1;line-height:2}.about-lines a{color:#ffb46f;text-decoration:none}
+.admin-only{display:none}.is-admin .admin-only{display:block}
+@media(max-width:850px){.panel-shell{grid-template-columns:1fr;height:94vh}.panel-sidebar{border-left:0;border-bottom:1px solid rgba(255,255,255,.07);padding:15px}.panel-menu{grid-template-columns:repeat(2,1fr)}.panel-profile{margin-bottom:12px}.panel-main{padding:22px}.panel-grid{grid-template-columns:1fr}.panel-field.full{grid-column:auto}}
+
 </style>
 
 </head>
@@ -1734,6 +1787,8 @@ footer{
         class="user-name"
         id="userName"
     ></span>
+
+    <button class="panel-button" id="openPanel">پنل کاربری</button>
 
     <button
         class="logout-btn"
@@ -2013,6 +2068,77 @@ aria-label="بازگشت به بالا"
 </div>
 
 </footer>
+
+
+<!-- USER / ADMIN PANEL -->
+<div class="panel-overlay" id="panelOverlay">
+  <div class="panel-shell" id="panelShell">
+    <aside class="panel-sidebar">
+      <div class="panel-profile">
+        <strong id="panelUserName">کاربر</strong>
+        <span class="panel-rank" id="panelRank">customer</span>
+      </div>
+      <div class="panel-menu">
+        <button class="active" data-panel-view="newProject">＋ ثبت پروژه</button>
+        <button data-panel-view="myProjects">پروژه‌های من</button>
+        <button data-panel-view="about">درباره ما</button>
+        <button data-panel-view="help">راهنما و ارتباط</button>
+        <button class="admin-only" data-panel-view="adminProjects">مدیریت درخواست‌ها</button>
+      </div>
+    </aside>
+
+    <div class="panel-main">
+      <button class="panel-close" id="panelClose">×</button>
+
+      <section class="panel-view active" id="panel-newProject">
+        <div class="panel-head"><h2>ثبت پروژه جدید</h2><p>اطلاعات پروژه را کامل وارد کنید تا درخواست شما بررسی شود.</p></div>
+        <div class="panel-message" id="projectMessage"></div>
+        <form id="projectForm" class="panel-card">
+          <div class="panel-grid">
+            <div class="panel-field"><label>نام و نام خانوادگی</label><input id="projectFullName" required placeholder="نام کامل"></div>
+            <div class="panel-field"><label>شماره تماس</label><input id="projectPhone" required maxlength="11" placeholder="09123456789"></div>
+            <div class="panel-field full"><label>نوع پروژه</label><select id="projectType" required><option value="">انتخاب کنید</option><option value="video_editing">تدوین ویدیو</option><option value="web_design">طراحی وب</option><option value="bot_development">ساخت ربات</option></select></div>
+            <div class="panel-field full"><label>بودجه</label><div class="budget-options">
+              <label class="budget-chip"><input type="radio" name="budget" value="under_1" checked><span>زیر ۱ میلیون تومان</span></label>
+              <label class="budget-chip"><input type="radio" name="budget" value="over_2"><span>بیشتر از ۲ میلیون</span></label>
+              <label class="budget-chip"><input type="radio" name="budget" value="over_5"><span>بیشتر از ۵ میلیون</span></label>
+              <label class="budget-chip"><input type="radio" name="budget" value="custom"><span>انتخاب دستی</span></label>
+            </div></div>
+            <div class="panel-field full" id="customBudgetWrap" style="display:none"><label>بودجه پیشنهادی شما</label><input id="customBudget" placeholder="مثلاً ۳,۵۰۰,۰۰۰ تومان"></div>
+            <div class="panel-field full"><label>توضیحات پروژه</label><textarea id="projectDescription" required placeholder="هر توضیح، جزئیات، زمان تحویل یا خواسته خاصی دارید اینجا بنویسید..."></textarea></div>
+          </div>
+          <button class="panel-submit" type="submit">ارسال درخواست پروژه</button>
+        </form>
+      </section>
+
+      <section class="panel-view" id="panel-myProjects">
+        <div class="panel-head"><h2>پروژه‌های من</h2><p>وضعیت درخواست‌ها و پاسخ مدیر را از این بخش مشاهده کنید.</p></div>
+        <div class="project-list" id="myProjectsList"><div class="panel-card">در حال دریافت اطلاعات...</div></div>
+      </section>
+
+      <section class="panel-view" id="panel-about">
+        <div class="panel-head"><h2>درباره MTA Studio</h2><p>استودیو خلاقیت دیجیتال برای اجرای ایده‌های شما.</p></div>
+        <div class="panel-card about-lines">
+          <p>من ماهان هستم و در زمینه تدوین ویدیو، طراحی وب و توسعه ربات فعالیت می‌کنم. هدف MTA Studio ارائه خروجی حرفه‌ای، تمیز و متناسب با نیاز هر پروژه است.</p>
+          <p><strong>شهر:</strong> تهران</p>
+          <p><strong>آیدی بله:</strong> <span dir="ltr">@mahan_the_artist_official</span></p>
+          <p><strong>پروفایل فریلنسری:</strong> <a target="_blank" rel="noopener" href="https://ponisha.ir/profile/MahanTheArtist1">Ponisha / MahanTheArtist1</a></p>
+          <p>برای هر پروژه قبل از شروع، جزئیات، بودجه و زمان‌بندی بررسی می‌شود تا مسیر اجرا شفاف باشد.</p>
+        </div>
+      </section>
+
+      <section class="panel-view" id="panel-help">
+        <div class="panel-head"><h2>راهنما و ارتباط</h2><p>برای ثبت درخواست، نوع پروژه، بودجه و توضیحات را دقیق وارد کنید.</p></div>
+        <div class="panel-card about-lines"><p>بعد از ارسال، درخواست در حساب شما ذخیره می‌شود و مدیر می‌تواند آن را بررسی کرده و پاسخ بدهد.</p><p>در صورت نیاز به توضیح بیشتر، از طریق بله با آیدی <span dir="ltr">@mahan_the_artist_official</span> پیام بدهید.</p></div>
+      </section>
+
+      <section class="panel-view admin-only" id="panel-adminProjects">
+        <div class="panel-head"><h2>مدیریت درخواست‌ها</h2><p>این بخش فقط برای رنک <b>admin</b> نمایش داده می‌شود.</p></div>
+        <div class="project-list" id="adminProjectsList"><div class="panel-card">در حال دریافت درخواست‌ها...</div></div>
+      </section>
+    </div>
+  </div>
+</div>
 
 <div
     class="auth-overlay"
@@ -2616,6 +2742,16 @@ const logoutBtn =
         "logoutBtn"
     );
 
+const openPanel = document.getElementById("openPanel");
+const panelOverlay = document.getElementById("panelOverlay");
+const panelClose = document.getElementById("panelClose");
+const panelShell = document.getElementById("panelShell");
+const panelUserName = document.getElementById("panelUserName");
+const panelRank = document.getElementById("panelRank");
+const projectForm = document.getElementById("projectForm");
+const projectMessage = document.getElementById("projectMessage");
+let currentUser = null;
+
 
 let pendingPhone = "";
 
@@ -3193,22 +3329,19 @@ loginForm.addEventListener(
 ===================================================== */
 
 function updateUserState(user){
-
-    if(!user){
-        return;
-    }
-
-    openAuth.style.display =
-        "none";
-
-    userState.classList.add(
-        "show"
-    );
-
-    userName.textContent =
-        user.name;
-
+    if(!user) return;
+    currentUser = user;
+    openAuth.style.display = "none";
+    userState.classList.add("show");
+    userName.textContent = user.name || "کاربر";
+    panelUserName.textContent = user.name || "کاربر";
+    const rank = (user.rank || user.role || "customer").toLowerCase();
+    panelRank.textContent = rank;
+    panelShell.classList.toggle("is-admin", rank === "admin");
+    document.getElementById("projectFullName").value = user.name || "";
+    if(user.phone) document.getElementById("projectPhone").value = user.phone;
 }
+
 
 
 /* =====================================================
@@ -3281,6 +3414,8 @@ logoutBtn.addEventListener(
         userState.classList.remove(
             "show"
         );
+        currentUser = null;
+        closeUserPanel();
 
         openAuth.style.display =
             "";
@@ -3296,52 +3431,84 @@ logoutBtn.addEventListener(
    PROJECT BUTTON
 ===================================================== */
 
-projectButton.addEventListener(
-    "click",
-    async () => {
-
-        try{
-
-            const response =
-                await apiFetch(
-                    "/api/me"
-                );
-
-            if(response.ok){
-
-                showMessage(
-                    "حساب شما آماده است. در مرحله بعد فرم ثبت پروژه را فعال می‌کنیم.",
-                    "success"
-                );
-
-                openAuthModal();
-
-                return;
-            }
-
-            showMessage(
-                "برای ثبت پروژه ابتدا وارد حساب خود شوید."
-            );
-
-            switchTab("login");
-
-            openAuthModal();
-
-        }catch(error){
-
-            console.error(
-                "PROJECT BUTTON ERROR:",
-                error
-            );
-
-            switchTab("login");
-
-            openAuthModal();
-
-        }
-
+projectButton.addEventListener("click", async () => {
+    try{
+        const response = await apiFetch("/api/me");
+        if(!response.ok) throw new Error("LOGIN_REQUIRED");
+        const data = await response.json();
+        if(data.user) updateUserState(data.user);
+        openUserPanel("newProject");
+    }catch(error){
+        showMessage("برای ثبت پروژه ابتدا وارد حساب خود شوید.");
+        switchTab("login");
+        openAuthModal();
     }
-);
+});
+
+function panelMessage(message,type="error"){
+    projectMessage.textContent=message;
+    projectMessage.className="panel-message show "+type;
+}
+function openUserPanel(view="newProject"){
+    panelOverlay.classList.add("active");
+    switchPanelView(view);
+}
+function closeUserPanel(){panelOverlay.classList.remove("active")}
+function switchPanelView(view){
+    document.querySelectorAll(".panel-view").forEach(el=>el.classList.toggle("active",el.id===`panel-${view}`));
+    document.querySelectorAll("[data-panel-view]").forEach(btn=>btn.classList.toggle("active",btn.dataset.panelView===view));
+    if(view==="myProjects") loadMyProjects();
+    if(view==="adminProjects") loadAdminProjects();
+}
+openPanel.addEventListener("click",()=>openUserPanel("newProject"));
+panelClose.addEventListener("click",closeUserPanel);
+panelOverlay.addEventListener("click",e=>{if(e.target===panelOverlay) closeUserPanel()});
+document.querySelectorAll("[data-panel-view]").forEach(btn=>btn.addEventListener("click",()=>switchPanelView(btn.dataset.panelView)));
+
+document.querySelectorAll('input[name="budget"]').forEach(r=>r.addEventListener("change",()=>{
+    document.getElementById("customBudgetWrap").style.display = r.value==="custom" && r.checked ? "grid" : (document.querySelector('input[name="budget"]:checked').value==="custom" ? "grid":"none");
+}));
+
+projectForm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const fullName=document.getElementById("projectFullName").value.trim();
+    const phone=document.getElementById("projectPhone").value.trim();
+    const type=document.getElementById("projectType").value;
+    const budget=document.querySelector('input[name="budget"]:checked')?.value;
+    const customBudget=document.getElementById("customBudget").value.trim();
+    const description=document.getElementById("projectDescription").value.trim();
+    if(!fullName || !/^09\d{9}$/.test(phone) || !type || !description){panelMessage("لطفاً همه اطلاعات را درست وارد کنید.");return}
+    if(budget==="custom" && !customBudget){panelMessage("بودجه دستی را وارد کنید.");return}
+    try{
+        const response=await apiFetch("/api/projects",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({fullName,phone,type,budget,customBudget,description})});
+        const data=await response.json().catch(()=>({}));
+        if(!response.ok){panelMessage(data.message||"ثبت درخواست ناموفق بود.");return}
+        panelMessage(data.message||"درخواست پروژه با موفقیت ارسال شد.","success");
+        document.getElementById("projectType").value="";
+        document.getElementById("projectDescription").value="";
+        setTimeout(()=>switchPanelView("myProjects"),700);
+    }catch(err){console.error(err);panelMessage("ارتباط با سرور برقرار نشد.")}
+});
+
+function projectLabel(v){return ({video_editing:"تدوین ویدیو",web_design:"طراحی وب",bot_development:"ساخت ربات"})[v]||v||"پروژه"}
+function esc(v){return String(v??"").replace(/[&<>\"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'\"':"&quot;","'":"&#039;"})[m])}
+function projectCard(p,admin=false){
+    const reply=p.adminReply||p.reply||"هنوز پاسخی ثبت نشده است.";
+    return `<div class="project-item"><div class="project-top"><div><div class="project-title">${esc(projectLabel(p.type||p.projectType))}</div><span class="status">${esc(p.status||"pending")}</span></div><div class="project-meta">#${esc(p.id||"")}</div></div><p>${esc(p.description||"")}</p><p style="margin-top:8px"><b>بودجه:</b> ${esc(p.customBudget||p.budget||"-")}</p><p style="margin-top:8px"><b>پاسخ مدیر:</b> ${esc(reply)}</p>${admin?`<div class="project-actions"><button class="mini-btn orange" onclick="adminReplyProject('${esc(p.id)}')">پاسخ</button><button class="mini-btn" onclick="adminEditProject('${esc(p.id)}','${esc(p.status||'pending')}')">تغییر وضعیت</button><button class="mini-btn danger" onclick="adminDeleteProject('${esc(p.id)}')">حذف</button></div>`:""}</div>`;
+}
+async function loadMyProjects(){
+    const box=document.getElementById("myProjectsList"); box.innerHTML='<div class="panel-card">در حال دریافت اطلاعات...</div>';
+    try{const r=await apiFetch("/api/projects/my");const d=await r.json();if(!r.ok) throw new Error();const arr=d.projects||d.data||[];box.innerHTML=arr.length?arr.map(p=>projectCard(p)).join(""):'<div class="panel-card">هنوز پروژه‌ای ثبت نکرده‌اید.</div>'}catch(e){box.innerHTML='<div class="panel-card">دریافت پروژه‌ها ممکن نشد. endpoint موردنیاز: <span dir="ltr">GET /api/projects/my</span></div>'}
+}
+async function loadAdminProjects(){
+    const rank=(currentUser?.rank||currentUser?.role||"").toLowerCase(); if(rank!=="admin") return;
+    const box=document.getElementById("adminProjectsList"); box.innerHTML='<div class="panel-card">در حال دریافت درخواست‌ها...</div>';
+    try{const r=await apiFetch("/api/admin/projects");const d=await r.json();if(!r.ok) throw new Error();const arr=d.projects||d.data||[];box.innerHTML=arr.length?arr.map(p=>projectCard(p,true)).join(""):'<div class="panel-card">درخواستی وجود ندارد.</div>'}catch(e){box.innerHTML='<div class="panel-card">دریافت درخواست‌های مدیریت ممکن نشد. endpoint موردنیاز: <span dir="ltr">GET /api/admin/projects</span></div>'}
+}
+window.adminReplyProject=async id=>{const reply=prompt("پاسخ مدیر را وارد کنید:");if(reply===null)return;try{const r=await apiFetch(`/api/admin/projects/${id}/reply`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({reply})});if(!r.ok)throw new Error();loadAdminProjects()}catch(e){alert("ثبت پاسخ ناموفق بود.")}};
+window.adminEditProject=async(id,current)=>{const status=prompt("وضعیت جدید را وارد کنید: pending / reviewing / accepted / rejected / done",current);if(!status)return;try{const r=await apiFetch(`/api/admin/projects/${id}`,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({status})});if(!r.ok)throw new Error();loadAdminProjects()}catch(e){alert("ویرایش ناموفق بود.")}};
+window.adminDeleteProject=async id=>{if(!confirm("این درخواست حذف شود؟"))return;try{const r=await apiFetch(`/api/admin/projects/${id}`,{method:"DELETE"});if(!r.ok)throw new Error();loadAdminProjects()}catch(e){alert("حذف ناموفق بود.")}};
+
 
 
 /* =====================================================
