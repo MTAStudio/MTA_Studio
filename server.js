@@ -1,4 +1,3 @@
- 
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
@@ -12,8 +11,15 @@ const Database = require("better-sqlite3");
 
 const PORT = Number(process.env.PORT) || 3000;
 
-const FRONTEND_ORIGIN =
-    process.env.FRONTEND_ORIGIN || "*";
+// FRONTEND_ORIGIN can be a single origin OR a comma-separated list, e.g.:
+//   FRONTEND_ORIGIN=https://mysite.com,https://www.mysite.com
+// If left unset, the server will reflect back whatever Origin sent the
+// request (still credential-safe, just not locked down to specific
+// domains). For production you should set this explicitly on Render.
+const ALLOWED_ORIGINS = (process.env.FRONTEND_ORIGIN || "")
+    .split(",")
+    .map(origin => origin.trim())
+    .filter(Boolean);
 
 // ======================================================
 // DATABASE
@@ -130,11 +136,22 @@ function getCurrentUser(req) {
     return user || null;
 }
 
-function setSessionCookie(token) {
-    const isProduction =
-        process.env.NODE_ENV === "production";
+// Render terminates TLS at its edge and forwards plain HTTP internally,
+// so req.socket.encrypted is never true there. The reliable signal is
+// the X-Forwarded-Proto header Render always sets. Falling back to
+// NODE_ENV alone is what caused broken sessions when that var wasn't
+// manually configured on Render.
+function isHttps(req) {
+    return (
+        req.headers["x-forwarded-proto"] === "https" ||
+        req.socket.encrypted === true
+    );
+}
 
-    if (isProduction) {
+function setSessionCookie(token, req) {
+    if (isHttps(req)) {
+        // Needed because the frontend is on a different origin than
+        // this API — cross-site cookies require SameSite=None; Secure.
         return [
             "mta_session=" + token,
             "HttpOnly",
@@ -145,6 +162,8 @@ function setSessionCookie(token) {
         ].join("; ");
     }
 
+    // Local HTTP development fallback (Secure cookies are dropped by
+    // browsers over plain HTTP, so SameSite=None would silently fail).
     return [
         "mta_session=" + token,
         "HttpOnly",
@@ -154,11 +173,8 @@ function setSessionCookie(token) {
     ].join("; ");
 }
 
-function clearSessionCookie() {
-    const isProduction =
-        process.env.NODE_ENV === "production";
-
-    if (isProduction) {
+function clearSessionCookie(req) {
+    if (isHttps(req)) {
         return [
             "mta_session=",
             "HttpOnly",
@@ -577,7 +593,7 @@ async function handleAPI(req, res) {
                 },
                 {
                     "Set-Cookie":
-                        setSessionCookie(token)
+                        setSessionCookie(token, req)
                 }
             );
 
@@ -755,7 +771,7 @@ async function handleAPI(req, res) {
                 },
                 {
                     "Set-Cookie":
-                        setSessionCookie(token)
+                        setSessionCookie(token, req)
                 }
             );
 
@@ -820,7 +836,7 @@ async function handleAPI(req, res) {
             },
             {
                 "Set-Cookie":
-                    clearSessionCookie()
+                    clearSessionCookie(req)
             }
         );
     }
@@ -1021,19 +1037,26 @@ const server = http.createServer(
             // ==================================================
             // CORS
             // ==================================================
+            //
+            // IMPORTANT: we never send "Access-Control-Allow-Origin: *"
+            // here. The frontend always calls fetch() with
+            // credentials: "include" so the session cookie is sent
+            // cross-origin — and browsers flatly refuse credentialed
+            // requests when the Allow-Origin header is a wildcard. We
+            // must always echo back one specific origin instead.
 
-            if (
-                FRONTEND_ORIGIN === "*"
-            ) {
-                res.setHeader(
-                    "Access-Control-Allow-Origin",
-                    "*"
+            const requestOrigin = req.headers.origin;
+
+            const originIsAllowed =
+                requestOrigin && (
+                    ALLOWED_ORIGINS.length === 0 ||
+                    ALLOWED_ORIGINS.includes(requestOrigin)
                 );
-            } else {
 
+            if (originIsAllowed) {
                 res.setHeader(
                     "Access-Control-Allow-Origin",
-                    FRONTEND_ORIGIN
+                    requestOrigin
                 );
 
                 res.setHeader(
@@ -1285,10 +1308,21 @@ server.listen(
         console.log(
             "Projects API: ready"
         );
+
+        if (ALLOWED_ORIGINS.length === 0) {
+            console.log(
+                "CORS: reflecting any Origin (set FRONTEND_ORIGIN env var to restrict)"
+            );
+        } else {
+            console.log(
+                "CORS: allowed origins -> " +
+                ALLOWED_ORIGINS.join(", ")
+            );
+        }
+
         console.log(
             "================================"
         );
         console.log("");
     }
 );
-
