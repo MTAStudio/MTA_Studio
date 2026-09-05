@@ -11,15 +11,62 @@ const Database = require("better-sqlite3");
 
 const PORT = Number(process.env.PORT) || 3000;
 
-// FRONTEND_ORIGIN can be a single origin OR a comma-separated list, e.g.:
+// The GitHub Pages site is always allowed. Note: the browser's Origin
+// header only ever contains scheme + host (never a path), so this must
+// be exactly "https://mtastudio.github.io" — the "/MTA_Studio/" part
+// of your site's URL is irrelevant to CORS.
+const DEFAULT_ALLOWED_ORIGINS = [
+    "https://mtastudio.github.io"
+];
+
+// FRONTEND_ORIGIN can add extra origins on top of the defaults above —
+// a single origin OR a comma-separated list, e.g.:
 //   FRONTEND_ORIGIN=https://mysite.com,https://www.mysite.com
-// If left unset, the server will reflect back whatever Origin sent the
-// request (still credential-safe, just not locked down to specific
-// domains). For production you should set this explicitly on Render.
-const ALLOWED_ORIGINS = (process.env.FRONTEND_ORIGIN || "")
+const EXTRA_ALLOWED_ORIGINS = (process.env.FRONTEND_ORIGIN || "")
     .split(",")
     .map(origin => origin.trim())
     .filter(Boolean);
+
+const ALLOWED_ORIGINS = Array.from(
+    new Set([
+        ...DEFAULT_ALLOWED_ORIGINS,
+        ...EXTRA_ALLOWED_ORIGINS
+    ])
+);
+
+// Any localhost/127.0.0.1 origin (any port) is always allowed too, so
+// testing server.js on your own laptop keeps working without extra
+// config. "null" is what browsers send as Origin when a page is opened
+// directly from disk (double-clicking index.html) instead of served
+// over http/https.
+function isLocalOrigin(origin) {
+    try {
+        const { hostname } = new URL(origin);
+
+        return (
+            hostname === "localhost" ||
+            hostname === "127.0.0.1"
+        );
+    } catch {
+        return false;
+    }
+}
+
+function isOriginAllowed(origin) {
+    if (!origin) {
+        return false;
+    }
+
+    if (origin === "null") {
+        return true;
+    }
+
+    if (isLocalOrigin(origin)) {
+        return true;
+    }
+
+    return ALLOWED_ORIGINS.includes(origin);
+}
 
 // ======================================================
 // DATABASE
@@ -88,6 +135,35 @@ db.exec(
 );
 
 // ======================================================
+// MIGRATIONS (add columns to tables created in older
+// versions of this file, without losing existing data)
+// ======================================================
+
+function columnExists(table, column) {
+    const columns = db.prepare(
+        "PRAGMA table_info(" + table + ")"
+    ).all();
+
+    return columns.some(
+        col => col.name === column
+    );
+}
+
+if (!columnExists("projects", "admin_response")) {
+    db.exec(
+        "ALTER TABLE projects " +
+        "ADD COLUMN admin_response TEXT"
+    );
+}
+
+if (!columnExists("projects", "responded_at")) {
+    db.exec(
+        "ALTER TABLE projects " +
+        "ADD COLUMN responded_at TEXT"
+    );
+}
+
+// ======================================================
 // SESSIONS
 // ======================================================
 
@@ -134,6 +210,10 @@ function getCurrentUser(req) {
     ).get(session.userId);
 
     return user || null;
+}
+
+function isAdmin(user) {
+    return Boolean(user) && user.role === "admin";
 }
 
 // Render terminates TLS at its edge and forwards plain HTTP internally,
@@ -1015,6 +1095,436 @@ async function handleAPI(req, res) {
     }
 
     // ==================================================
+    // ADMIN: LIST ALL PROJECTS
+    // ==================================================
+
+    if (
+        req.method === "GET" &&
+        req.url === "/api/admin/projects"
+    ) {
+        const user = getCurrentUser(req);
+
+        if (!user) {
+            return sendJSON(res, 401, {
+                success: false,
+                message:
+                    "ابتدا وارد حساب شوید."
+            });
+        }
+
+        if (!isAdmin(user)) {
+            return sendJSON(res, 403, {
+                success: false,
+                message:
+                    "شما دسترسی مدیریت ندارید."
+            });
+        }
+
+        const projects =
+            db.prepare(
+                "SELECT id, user_id, first_name, last_name, phone, " +
+                "project_type, budget, description, status, " +
+                "admin_response, responded_at, created_at " +
+                "FROM projects " +
+                "ORDER BY id DESC"
+            ).all();
+
+        return sendJSON(res, 200, {
+            success: true,
+            projects
+        });
+    }
+
+    // ==================================================
+    // ADMIN: RESPOND / CHANGE STATUS
+    // ==================================================
+
+    if (
+        req.method === "PATCH" &&
+        /^\/api\/admin\/projects\/\d+$/.test(req.url)
+    ) {
+        try {
+            const user = getCurrentUser(req);
+
+            if (!user) {
+                return sendJSON(res, 401, {
+                    success: false,
+                    message:
+                        "ابتدا وارد حساب شوید."
+                });
+            }
+
+            if (!isAdmin(user)) {
+                return sendJSON(res, 403, {
+                    success: false,
+                    message:
+                        "شما دسترسی مدیریت ندارید."
+                });
+            }
+
+            const projectId =
+                Number(
+                    req.url.split("/").pop()
+                );
+
+            const body =
+                await readBody(req);
+
+            const allowedStatuses = [
+                "pending",
+                "in_progress",
+                "completed",
+                "rejected"
+            ];
+
+            const status =
+                body.status !== undefined
+                    ? String(body.status).trim()
+                    : null;
+
+            const adminResponse =
+                body.adminResponse !== undefined
+                    ? String(body.adminResponse).trim()
+                    : null;
+
+            if (
+                status !== null &&
+                !allowedStatuses.includes(status)
+            ) {
+                return sendJSON(res, 400, {
+                    success: false,
+                    message:
+                        "وضعیت نامعتبر است."
+                });
+            }
+
+            const existing =
+                db.prepare(
+                    "SELECT id FROM projects WHERE id = ?"
+                ).get(projectId);
+
+            if (!existing) {
+                return sendJSON(res, 404, {
+                    success: false,
+                    message:
+                        "درخواست پروژه پیدا نشد."
+                });
+            }
+
+            if (status !== null) {
+                db.prepare(
+                    "UPDATE projects SET status = ? WHERE id = ?"
+                ).run(status, projectId);
+            }
+
+            if (adminResponse !== null) {
+                db.prepare(
+                    "UPDATE projects " +
+                    "SET admin_response = ?, responded_at = CURRENT_TIMESTAMP " +
+                    "WHERE id = ?"
+                ).run(adminResponse, projectId);
+            }
+
+            const updated =
+                db.prepare(
+                    "SELECT id, user_id, first_name, last_name, phone, " +
+                    "project_type, budget, description, status, " +
+                    "admin_response, responded_at, created_at " +
+                    "FROM projects WHERE id = ?"
+                ).get(projectId);
+
+            return sendJSON(res, 200, {
+                success: true,
+                message:
+                    "درخواست به‌روزرسانی شد.",
+                project: updated
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            return sendJSON(res, 500, {
+                success: false,
+                message:
+                    "خطایی هنگام به‌روزرسانی رخ داد."
+            });
+        }
+    }
+
+    // ==================================================
+    // ADMIN: EDIT PROJECT (FULL)
+    // ==================================================
+
+    if (
+        req.method === "PUT" &&
+        /^\/api\/admin\/projects\/\d+$/.test(req.url)
+    ) {
+        try {
+            const user = getCurrentUser(req);
+
+            if (!user) {
+                return sendJSON(res, 401, {
+                    success: false,
+                    message:
+                        "ابتدا وارد حساب شوید."
+                });
+            }
+
+            if (!isAdmin(user)) {
+                return sendJSON(res, 403, {
+                    success: false,
+                    message:
+                        "شما دسترسی مدیریت ندارید."
+                });
+            }
+
+            const projectId =
+                Number(
+                    req.url.split("/").pop()
+                );
+
+            const existing =
+                db.prepare(
+                    "SELECT * FROM projects WHERE id = ?"
+                ).get(projectId);
+
+            if (!existing) {
+                return sendJSON(res, 404, {
+                    success: false,
+                    message:
+                        "درخواست پروژه پیدا نشد."
+                });
+            }
+
+            const body =
+                await readBody(req);
+
+            const firstName =
+                String(
+                    body.firstName ?? existing.first_name
+                ).trim();
+
+            const lastName =
+                String(
+                    body.lastName ?? existing.last_name
+                ).trim();
+
+            const phone =
+                String(
+                    body.phone ?? existing.phone
+                ).trim();
+
+            const projectType =
+                String(
+                    body.projectType ?? existing.project_type
+                ).trim();
+
+            const budget =
+                String(
+                    body.budget ?? existing.budget
+                ).trim();
+
+            const description =
+                String(
+                    body.description ?? existing.description
+                ).trim();
+
+            if (!firstName || !lastName) {
+                return sendJSON(res, 400, {
+                    success: false,
+                    message:
+                        "نام و نام خانوادگی را وارد کنید."
+                });
+            }
+
+            if (!validPhone(phone)) {
+                return sendJSON(res, 400, {
+                    success: false,
+                    message:
+                        "شماره موبایل معتبر نیست."
+                });
+            }
+
+            if (!projectType || !budget) {
+                return sendJSON(res, 400, {
+                    success: false,
+                    message:
+                        "نوع پروژه و بودجه را وارد کنید."
+                });
+            }
+
+            if (description.length < 10) {
+                return sendJSON(res, 400, {
+                    success: false,
+                    message:
+                        "توضیحات پروژه باید حداقل ۱۰ کاراکتر باشد."
+                });
+            }
+
+            db.prepare(
+                "UPDATE projects SET " +
+                "first_name = ?, last_name = ?, phone = ?, " +
+                "project_type = ?, budget = ?, description = ? " +
+                "WHERE id = ?"
+            ).run(
+                firstName,
+                lastName,
+                phone,
+                projectType,
+                budget,
+                description,
+                projectId
+            );
+
+            const updated =
+                db.prepare(
+                    "SELECT id, user_id, first_name, last_name, phone, " +
+                    "project_type, budget, description, status, " +
+                    "admin_response, responded_at, created_at " +
+                    "FROM projects WHERE id = ?"
+                ).get(projectId);
+
+            return sendJSON(res, 200, {
+                success: true,
+                message:
+                    "درخواست ویرایش شد.",
+                project: updated
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            return sendJSON(res, 500, {
+                success: false,
+                message:
+                    "خطایی هنگام ویرایش رخ داد."
+            });
+        }
+    }
+
+    // ==================================================
+    // ADMIN: DELETE PROJECT
+    // ==================================================
+
+    if (
+        req.method === "DELETE" &&
+        /^\/api\/admin\/projects\/\d+$/.test(req.url)
+    ) {
+        const user = getCurrentUser(req);
+
+        if (!user) {
+            return sendJSON(res, 401, {
+                success: false,
+                message:
+                    "ابتدا وارد حساب شوید."
+            });
+        }
+
+        if (!isAdmin(user)) {
+            return sendJSON(res, 403, {
+                success: false,
+                message:
+                    "شما دسترسی مدیریت ندارید."
+            });
+        }
+
+        const projectId =
+            Number(
+                req.url.split("/").pop()
+            );
+
+        const result =
+            db.prepare(
+                "DELETE FROM projects WHERE id = ?"
+            ).run(projectId);
+
+        if (result.changes === 0) {
+            return sendJSON(res, 404, {
+                success: false,
+                message:
+                    "درخواست پروژه پیدا نشد."
+            });
+        }
+
+        return sendJSON(res, 200, {
+            success: true,
+            message:
+                "درخواست حذف شد."
+        });
+    }
+
+    // ==================================================
+    // ADMIN BOOTSTRAP
+    // ==================================================
+    //
+    // Lets a logged-in user promote themselves to "admin" if they know
+    // the secret ADMIN_SETUP_KEY environment variable. This exists
+    // because there's no shell/DB access on Render otherwise. Set
+    // ADMIN_SETUP_KEY in Render's environment variables to enable it;
+    // if it's not set, this endpoint stays disabled.
+
+    if (
+        req.method === "POST" &&
+        req.url === "/api/admin/bootstrap"
+    ) {
+        try {
+            const setupKey =
+                process.env.ADMIN_SETUP_KEY || "";
+
+            if (!setupKey) {
+                return sendJSON(res, 403, {
+                    success: false,
+                    message:
+                        "این قابلیت فعال نیست."
+                });
+            }
+
+            const user = getCurrentUser(req);
+
+            if (!user) {
+                return sendJSON(res, 401, {
+                    success: false,
+                    message:
+                        "ابتدا وارد حساب شوید."
+                });
+            }
+
+            const body =
+                await readBody(req);
+
+            const providedKey =
+                String(body.setupKey || "");
+
+            if (providedKey !== setupKey) {
+                return sendJSON(res, 403, {
+                    success: false,
+                    message:
+                        "کد مدیریتی اشتباه است."
+                });
+            }
+
+            db.prepare(
+                "UPDATE users SET role = 'admin' WHERE id = ?"
+            ).run(user.id);
+
+            return sendJSON(res, 200, {
+                success: true,
+                message:
+                    "شما اکنون مدیر هستید. برای اعمال کامل تغییرات، دوباره وارد شوید."
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            return sendJSON(res, 500, {
+                success: false,
+                message:
+                    "خطایی رخ داد."
+            });
+        }
+    }
+
+    // ==================================================
     // API NOT FOUND
     // ==================================================
 
@@ -1047,13 +1557,7 @@ const server = http.createServer(
 
             const requestOrigin = req.headers.origin;
 
-            const originIsAllowed =
-                requestOrigin && (
-                    ALLOWED_ORIGINS.length === 0 ||
-                    ALLOWED_ORIGINS.includes(requestOrigin)
-                );
-
-            if (originIsAllowed) {
+            if (isOriginAllowed(requestOrigin)) {
                 res.setHeader(
                     "Access-Control-Allow-Origin",
                     requestOrigin
@@ -1072,7 +1576,7 @@ const server = http.createServer(
 
             res.setHeader(
                 "Access-Control-Allow-Methods",
-                "GET, POST, OPTIONS"
+                "GET, POST, PATCH, PUT, DELETE, OPTIONS"
             );
 
             res.setHeader(
@@ -1309,16 +1813,11 @@ server.listen(
             "Projects API: ready"
         );
 
-        if (ALLOWED_ORIGINS.length === 0) {
-            console.log(
-                "CORS: reflecting any Origin (set FRONTEND_ORIGIN env var to restrict)"
-            );
-        } else {
-            console.log(
-                "CORS: allowed origins -> " +
-                ALLOWED_ORIGINS.join(", ")
-            );
-        }
+        console.log(
+            "CORS: allowed origins -> " +
+            ALLOWED_ORIGINS.join(", ") +
+            " (plus localhost/127.0.0.1 and file:// during dev)"
+        );
 
         console.log(
             "================================"
